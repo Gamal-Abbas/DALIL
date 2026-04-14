@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "641080345679",
+    "project_id": "dalil-86779",
+    "storage_bucket": "dalil-86779.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:641080345679:android:4d9d7f969d9664fbfa963a",
+        "android_client_info": {
+          "package_name": "com.example.dalil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "641080345679-5ibf6bs45lpaqu2fn960u51i26h53vpm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dalil",
+            "certificate_hash": "9db75976d8f9d013e12ce1ec789ec456c2ec9e1f"
+          }
+        },
+        {
+          "client_id": "641080345679-7lhqpd058ub38c7t5krfc232348an5o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBT_JsEbe1_XcxqV3oPl8Lo6OgnaeG23Ok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "641080345679-7lhqpd058ub38c7t5krfc232348an5o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "641080345679-ao5n1lfmhld3foo7c042um4kuquvpi2m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dalil"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
