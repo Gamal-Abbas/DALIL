@@ -48,5 +48,6 @@
   "error_loading_data": "خطأ في تحميل البيانات",
   "retry": "إعادة المحاولة",
   "no_data_found": "لم يتم العثور على بيانات",
-  "no_description_available": "لا يوجد وصف متاح"
+  "no_description_available": "لا يوجد وصف متاح",
+  "scan_instruction": "امسح الـ QR لاستكشاف التاريخ"
 }

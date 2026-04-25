@@ -87,7 +87,7 @@ class _MainContentCardState extends State<MainContentCard> {
                       EdgeInsetsGeometry.symmetric(vertical: 12),
                     ),
                     child: Text(
-                      showFull ? "seeMore".tr() : "seeLess".tr(),
+                      !showFull ? "seeMore".tr() : "seeLess".tr(),
                       style: TextStyle(
                         fontSize: (height/55).clamp(14, 20),   //14
                         color: widget.gold,

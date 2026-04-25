@@ -46,5 +46,6 @@
   "error_loading_data": "Error loading data",
   "retry": "Retry",
   "no_data_found": "No data found",
-  "no_description_available": "No description available"
+  "no_description_available": "No description available",
+  "scan_instruction": "Scan QR to explore the History"
 }

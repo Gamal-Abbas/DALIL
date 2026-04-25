@@ -1,5 +1,6 @@
 import 'package:dalil/core/bloc/auth/authBloc.dart';
 import 'package:dalil/core/constants/cash.dart';
+import 'package:dalil/features/QR/view/qrView.dart';
 import 'package:dalil/notifications/notifications2/notificationManager.dart';
 import 'package:dalil/notifications/notifications2/testNotificationview.dart';
 import 'package:dalil/workManager/workManagerServices.dart';
@@ -43,11 +44,13 @@ void main() async {
   //   await Workmanagerservices().init();    // 2 sec
   //   await Firebase.initializeApp(         // 3 sec
   //       options: DefaultFirebaseOptions.currentPlatform);
-
+  String? savedLang = cash.getLang();
+  // savedLang='en';
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'assets/translations',
+      startLocale: savedLang.isNotEmpty ? Locale(savedLang) : const Locale('ar'),
       fallbackLocale: const Locale('ar'),
       child: const MyApp(),
     ),
@@ -88,7 +91,7 @@ class MyApp extends StatelessWidget {
             useInheritedMediaQuery: true,
             builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
-            home:  TestnotiView2(),
+            home:  QRScannerScreen(),
           ),
         );
       },
