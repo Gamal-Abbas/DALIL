@@ -158,7 +158,16 @@ class HomeScreen extends StatelessWidget {
                       title: item.getName(lang),
                       subtitle: item.getDescription(lang),
                       image: item.image,
-                      onTap: () {},
+                      onTap: () {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => DetailsScreen(
+                        //       id: item.id,
+                        //     ),
+                        //   ),
+                        // );
+                      },
                     );
                   },
                 );
