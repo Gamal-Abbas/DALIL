@@ -9,6 +9,7 @@ class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key, required this.onChangeLocale});
 
   @override
+  // ignore: library_private_types_in_public_api
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
 
@@ -34,6 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
             child: Container(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.4),
             ),
           ),
@@ -176,6 +178,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             padding: const EdgeInsets.symmetric(
                 vertical: 40, horizontal: 25),
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(30),
               border: Border.all(color: Colors.white12),

@@ -12,30 +12,20 @@ class HomeScreen extends StatelessWidget {
     final loc = S.of(context);
     final lang = Localizations.localeOf(context).languageCode;
     final service = FirestoreService();
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0B1E2D),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
-        ),
         title: Text(
           loc.dalil,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFFE5C158),
             fontWeight: FontWeight.bold,
-            letterSpacing: 2,
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Stack(
         children: [
@@ -47,32 +37,50 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             child: Container(
-              color: Colors.black.withOpacity(0.4),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    // ignore: deprecated_member_use
+                    Colors.black.withOpacity(0.6),
+                    // ignore: deprecated_member_use
+                    Colors.black.withOpacity(0.9),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
             ),
           ),
           SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _buildHeader(context),
-                  _buildSection(
-                    title: loc.attractions,
-                    stream: service.getPlaces("attractions"),
-                    lang: lang,
-                  ),
-                  _buildSection(
-                    title: loc.kings,
-                    stream: service.getPlaces("kings"),
-                    lang: lang,
-                  ),
-                  _buildSection(
-                    title: loc.eras,
-                    stream: service.getPlaces("eras"),
-                    lang: lang,
-                  ),
-                ],
-              ),
+            child: ListView(
+              children: [
+                SizedBox(height: width * 0.05),
+                _buildHeader(context),
+                _buildSection(
+                  context: context,
+                  title: loc.attractions,
+                  icon: Icons.account_balance,
+                  collection: "attractions",
+                  stream: service.getPlaces("attractions"),
+                  lang: lang,
+                ),
+                _buildSection(
+                  context: context,
+                  title: loc.kings,
+                  icon: Icons.workspace_premium,
+                  collection: "kings",
+                  stream: service.getPlaces("kings"),
+                  lang: lang,
+                ),
+                _buildSection(
+                  context: context,
+                  title: loc.eras,
+                  icon: Icons.history,
+                  collection: "eras",
+                  stream: service.getPlaces("eras"),
+                  lang: lang,
+                ),
+              ],
             ),
           ),
         ],
@@ -82,61 +90,98 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final loc = S.of(context);
+    final width = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Center(
-        child: Column(
-          children: [
-            Text(
-              loc.welcome,
-              style: const TextStyle(color: Colors.white70),
+      padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+      child: Column(
+        children: [
+          Text(
+            loc.welcome,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: width * 0.04,
             ),
-            const SizedBox(height: 5),
-            Text(
-              loc.historyAwaits,
-              style: const TextStyle(
-                color: Color(0xFFE5C158),
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          SizedBox(height: width * 0.02),
+          Text(
+            loc.historyAwaits,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color(0xFFE5C158),
+              fontSize: width * 0.07,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 10),
-            Text(
-              loc.homeDesc,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white54),
+          ),
+          SizedBox(height: width * 0.03),
+          Text(
+            loc.homeDesc,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: width * 0.035,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSection({
+    required BuildContext context,
     required String title,
+    required IconData icon,
+    required String collection,
     required Stream<List<PlaceModel>> stream,
     required String lang,
   }) {
+    final width = MediaQuery.of(context).size.width;
+    final loc = S.of(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(vertical: width * 0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Color(0xFFE5C158),
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+            child: Row(
+              children: [
+                Icon(icon, color: const Color(0xFFE5C158)),
+                SizedBox(width: width * 0.02),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: const Color(0xFFE5C158),
+                      fontSize: width * 0.05,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      loc.seeMore,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: width * 0.035,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.white70,
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: width * 0.04),
           SizedBox(
-            height: 250,
+            height: width * 0.6,
             child: StreamBuilder<List<PlaceModel>>(
               stream: stream,
               builder: (context, snapshot) {
@@ -158,16 +203,7 @@ class HomeScreen extends StatelessWidget {
                       title: item.getName(lang),
                       subtitle: item.getDescription(lang),
                       image: item.image,
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => DetailsScreen(
-                        //       id: item.id,
-                        //     ),
-                        //   ),
-                        // );
-                      },
+                      onTap: () {},
                     );
                   },
                 );

@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "kings": MessageLookupByLibrary.simpleMessage("الملوك"),
         "language": MessageLookupByLibrary.simpleMessage("العربية"),
         "next": MessageLookupByLibrary.simpleMessage("التالي"),
+        "seeMore": MessageLookupByLibrary.simpleMessage("عرض المزيد"),
         "start": MessageLookupByLibrary.simpleMessage("ابدأ الآن"),
         "title1": MessageLookupByLibrary.simpleMessage("استكشف\nالعالم القديم"),
         "title2":
