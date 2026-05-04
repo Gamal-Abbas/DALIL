@@ -1,6 +1,7 @@
 import 'package:dalil/core/bloc/QR/qrBloc.dart';
 import 'package:dalil/core/bloc/QR/qrState.dart';
 import 'package:dalil/core/constants/app_color.dart';
+import 'package:dalil/core/utils/size.dart';
 import 'package:dalil/features/ArtifactDetails/data/model/baseModel.dart';
 import 'package:dalil/features/ArtifactDetails/view/dispatcher.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -35,13 +36,13 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final SH = size.height;
-    final SW = size.width;
+    // final size = MediaQuery.of(context).size;
+    // final SH = size.height;
+    // final SW = size.width;
 
-    const Color pharaohGold = Color(0xFFFFD700);
-    const Color pharaohBrown = Color(0xFF8B4513);
-    const Color pharaohBlack = Color(0xFF1A1A1A);
+    // const Color pharaohGold = Color(0xFFFFD700);
+    // const Color pharaohBrown = Color(0xFF8B4513);
+    // const Color pharaohBlack = Color(0xFF1A1A1A);
 
     return BlocProvider(
       create: (context) {
@@ -49,8 +50,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: pharaohBlack,
-        appBar: appbar(SH: SH, SW: SW, pharaohGold: pharaohGold),
+        backgroundColor: AppColors.primary,
+        appBar: appbar( pharaohGold:  AppColors.secondary),
         body: Stack(
           children: [
             BlocListener<qrBloc, qrState>(
@@ -70,78 +71,38 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               ),
             ),
 
-            Container(color: Colors.black.withOpacity(0.7)),
+             Container(color: Colors.black.withOpacity(0.7)),
 
             Center(
               child: Column(
-                spacing: (SH / 20),
+                spacing: (context.screenHeight / 20),
                 ///40
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: (SW / 1.3).clamp(280, 900), //300
-                    height: (SW / 2).clamp(280, 900), //300
+                    width: (context.screenWidth / 1.3).clamp(280, 900), //300
+                    height: (context.screenWidth / 2).clamp(280, 900), //300
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: pharaohGold.withOpacity(0.5),
-                        width: (SH / 700).clamp(1, 1.7), //1
+                        color:  AppColors.secondary
+                            // .withOpacity(0.5)
+                        ,
+                        width: (context.screenHeight / 700).clamp(1, 1.7), //1
                       ),
                       borderRadius: BorderRadius.circular(
-                        (SH / 85).clamp(10, 15),
+                        (context.screenHeight / 85).clamp(10, 15),
 
                         //10
                       ),
                     ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: _buildPharaohCorner(
-                            SH: SH,
-                            top: true,
-                            left: true,
-                            color: pharaohGold,
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: _buildPharaohCorner(
-                            top: true,
-                            SH: SH,
-                            left: false,
-                            color: pharaohGold,
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          child: _buildPharaohCorner(
-                            top: false,
-                            SH: SH,
-                            left: true,
-                            color: pharaohGold,
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: _buildPharaohCorner(
-                            top: false,
-                            SH: SH,
-                            left: false,
-                            color: pharaohGold,
-                          ),
-                        ),
-                      ],
-                    ),
+
+                    child: Sides(),
                   ),
                   Text(
                     "scan_instruction".tr(),
                     style: TextStyle(
-                      color: pharaohGold,
-                      fontSize: (SH / 40).clamp(16, 48),
+                      color:  AppColors.secondary,
+                      fontSize: (context.screenHeight / 40).clamp(16, 48),
                       ///18
                       fontWeight: FontWeight.bold,
                       shadows: [Shadow(blurRadius: 15, color: Colors.black)],
@@ -156,15 +117,59 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     );
   }
 
+
+  Widget Sides(){
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: _buildPharaohCorner(
+            top: true,
+            left: true,
+            color: AppColors.secondary,
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: _buildPharaohCorner(
+            top: true,
+            left: false,
+            color: AppColors.secondary,
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          child: _buildPharaohCorner(
+            top: false,
+            left: true,
+            color: AppColors.secondary,
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: _buildPharaohCorner(
+            top: false,
+            left: false,
+            color: AppColors.secondary,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPharaohCorner({
     required bool top,
     required bool left,
     required Color color,
-    required double SH,
+    // required double SH,
   }) {
-    double cornerSize = (SH / 18).clamp(40, 60);
+    double cornerSize = (context.screenHeight / 18).clamp(40, 60);
     ///40
-    double cornerThickness = (SH / 160).clamp(5, 20);
+    double cornerThickness = (context.screenHeight / 160).clamp(5, 20);
     ///5
     return Container(
       width: cornerSize,
@@ -189,16 +194,16 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   }
 
   PreferredSizeWidget appbar({
-    required double SW,
-    required double SH,
+    // required double SW,
+    // required double SH,
     required Color pharaohGold,
   }) {
     return AppBar(
-      toolbarHeight: (SH / 12).clamp(35, 140),
+      toolbarHeight: (context.screenHeight / 12).clamp(35, 140),
       title: Text(
         "DALIL Scanner",
         style: TextStyle(
-          fontSize: (SW / 16).clamp(20, 80),
+          fontSize: (context.screenWidth / 16).clamp(20, 80),
           color: pharaohGold,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
@@ -228,7 +233,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               icon: Icon(
                 Icons.photo_library,
                 color: AppColors.secondary,
-                size: (SW / 16).clamp(30, 100),
+                size: (context.screenWidth / 16).clamp(30, 100),
               ),
 
               onPressed: () async {
@@ -243,7 +248,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
           icon: Icon(
             Icons.flash_on,
             color: AppColors.secondary,
-            size: (SW / 16).clamp(35, 100), //35
+            size: (context.screenWidth / 16).clamp(35, 100), //35
           ),
           onPressed: () => cameraController.toggleTorch(),
         ),

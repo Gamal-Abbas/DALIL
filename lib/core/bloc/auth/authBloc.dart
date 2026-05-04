@@ -1,197 +1,130 @@
 import 'package:dalil/core/bloc/auth/authState.dart';
-import 'package:dalil/features/Auth/validateHelper.dart';
+import 'package:dalil/features/Auth/data/auth_Repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class authBloc extends Cubit<Authstate> {
-  authBloc() : super(AuthInitial());
+  final AuthRepo _repository;
+  authBloc({required AuthRepo repository})
+    : _repository = repository,
+      super(AuthInitial());
+  final storage = FlutterSecureStorage();
 
-  Future<void> signupEmail({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      emit(AuthLoading());
+  Future<void> autoLogin() async {
+    await storage.delete(key: 'token');
 
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+    String? savedUid = await storage.read(key: 'token');
+    print('==================================================');
+    print(savedUid);
+    await Future.delayed(Duration(milliseconds: 500));
+    if (savedUid != null) {
+      final currentUser = FirebaseAuth.instance.currentUser;
 
-      if (credential.user != null) {
+      if (currentUser != null && currentUser.emailVerified) {
         emit(AuthSuccess());
-        FirebaseAuth.instance.currentUser!.sendEmailVerification();
       } else {
-
-
-
-        emit(AuthError(message: 'User=null'));
+        emit(UnAuthenticated());
       }
-    } on FirebaseAuthException catch (e) {
-      var  error;
-      if (e.code == 'email-already-in-use') {
-        error="البريد الإلكتروني ده مسجل عندنا فعلاً، جرب تسجل دخول.";
-      }  else if (e.code == 'invalid-email') {
-        error="صيغة البريد الإلكتروني غير صحيحة.";
-      }
-     else  if (e.code == 'weak-password') {
-        print('كلمة السر ضعيفة جداً.');
-      }
-      else {
-        error="حصل مشكلة: ${e.message}";
-        // لأي خطأ تاني غير متوقع
-      }
-      emit(AuthError(message: error.toString()));
-    } catch (e) {
-      emit(AuthError(message: e.toString()));
-      print(e);
+    } else {
+      emit(UnAuthenticated());
     }
   }
 
-  Future<void> loginEmail({required email, required password}) async {
+  Future<void> saveToken(String token) async {
     try {
-      emit(AuthLoading());
-
-      final res = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-final user=FirebaseAuth.instance.currentUser;
-      if (user != null) {
-
-        await user.reload();
-
-        if (!(user.emailVerified)) {
-
-          DateTime creationTime = user.metadata.creationTime!;
-          DateTime now = DateTime.now();
-          Duration difference = now.difference(creationTime);
-
-          if (difference.inDays >= 3) {
-            try {
-              // امسح الحساب القديم لأنه أصبح "مهجور"
-              await user.delete();
-
-              // قوله يروح يسجل من جديد
-            emit(AuthDeleted(
-                message:  "حسابك القديم انتهت صلاحية تفعيله، برجاء التسجيل من جديد."));
-            } catch (e) {
-              // أحياناً الحذف بيطلب re-authentication لو فات وقت طويل
-              print("خطأ في الحذف تلقائياً: $e");
-            }
-          }
-          else {
-            // لسه قدامه وقت.. ابعتله إيميل تفعيل تاني
-            await user.sendEmailVerification();
-            emit(authVerified(isVerified: false));
-          }
-
-          await FirebaseAuth.instance.signOut();
-
-
-
-        }
-
-
-        else {
-          emit(AuthSuccess(Google: true));
-        }
-      } else {
-        emit(AuthError(message: 'Error'));
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('لا يوجد مستخدم بهذا البريد.');
-      } else if (e.code == 'wrong-password') {
-        print('كلمة السر غير صحيحة.');
-      } else {
-        print(e.toString());
-      }
-      emit(AuthError(message: e.toString()));
+      await storage.write(key: 'token', value: token);
+      // تأكيد الكتابة
+      String? check = await storage.read(key: 'token');
+      print('✅ Token saved and verified: $check');
+    } catch (e) {
+      print('❌ Error saving token: $e');
     }
+  }
+
+  Future<void> loginEmail({
+    required String email,
+    required String password,
+  }) async {
+    emit(AuthLoading());
+
+    final status = await _repository.checkVerication(
+      email: email,
+      password: password,
+    );
+    final user = FirebaseAuth.instance.currentUser;
+    if (status is AuthSuccess) {
+      saveToken(user!.uid);
+
+      // emit(AuthSuccess(Google: true));
+    } else if (status is AuthDeleted) {
+      // emit(
+      //   AuthDeleted(
+      //     message: "حسابك القديم انتهت صلاحية تفعيله، برجاء التسجيل من جديد.",
+      //   ),
+      // );
+    } else if (status is authVerified) {
+      await user?.sendEmailVerification();
+      // emit(authVerified(isVerified: false));
+    } else {
+      // emit(AuthError(message: 'error'));
+    }
+    emit(status);
   }
 
   Future<void> handleResetPassword({
     required String email,
     required BuildContext context,
   }) async {
+    emit(AuthLoading());
     final String _email = email.trim();
 
-    if (_email.isEmpty) {
-      emit(emailEmpty());
-    } else {
+    final status = await _repository.handleResetPassword(
+      email: _email,
+      context: context,
+    );
+    print('resssst============');
+    print(status);
+    emit(status);
+  }
 
-      try {
-
-        if( ValidationHelper.validateEmail(context,_email)!=null){
-          emit(AuthError(message: 'Email is invalid'));
-
-        }
-        else{
-        emit(AuthLoading());
-
-        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-        emit(verifySent(email: email));
-      }
-      } on FirebaseAuthException catch (e) {
-        emit(AuthError(message: e.toString()));
-      }
-    }
+  Future<void> deleteToken() async {
+    await storage.delete(key: 'token');
   }
 
   Future<void> signOut_Email() async {
-    await FirebaseAuth.instance.signOut();
+    await Future.wait([FirebaseAuth.instance.signOut(), deleteToken()]);
   }
 
   Future<void> signOut_Google() async {
-    await GoogleSignIn.instance.disconnect();
+    await Future.wait([GoogleSignIn.instance.disconnect(), deleteToken()]);
   }
 
-  static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
-  final x = _googleSignIn.initialize(
-    clientId:
-        '641080345679-7lhqpd058ub38c7t5krfc232348an5o1.apps.googleusercontent.com',
-    serverClientId:
-        '641080345679-7lhqpd058ub38c7t5krfc232348an5o1.apps.googleusercontent.com',
-  );
+  Future<void> signupEmail({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    emit(AuthLoading());
+    final status = await _repository.signupEmail(
+      email: email,
+      password: password,
+      name: name,
+    );
+    emit(status);
+  }
+
   Future<void> signInWithGoogle() async {
-    try {
-      emit(AuthLoading());
-      // First, sign out any existing user to avoid reauth issues
-      await _googleSignIn.signOut();
+    emit(AuthLoading());
+    final userCredential = await _repository.signInWithGoogle();
 
-      // Trigger the authentication flow
-      final googleUser = await _googleSignIn.authenticate();
-
-      // Check if authentication was successful
-      if (googleUser == null) {
-        return null;
-      }
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-      // Check if we have the required tokens
-      if (googleAuth.idToken == null) {
-        return null;
-      }
-
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the credential
-      final UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithCredential(credential);
-
-      emit(AuthSuccess());
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error signing in with Google: $e');
-      }
-      emit(AuthError(message: e.toString()));
+    if (userCredential?.user?.uid != null) {
+      saveToken(userCredential!.user!.uid);
+      emit(AuthSuccess(Google: true));
+    } else {
+      emit(AuthError(message: 'userCredential==null'));
     }
   }
 }

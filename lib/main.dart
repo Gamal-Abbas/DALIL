@@ -1,8 +1,11 @@
 import 'package:dalil/core/bloc/auth/authBloc.dart';
+import 'package:dalil/core/bloc/auth/authState.dart';
 import 'package:dalil/core/constants/cash.dart';
-import 'package:dalil/features/QR/view/qrView.dart';
+import 'package:dalil/features/Auth/data/auth_Repo.dart';
+import 'package:dalil/features/Auth/login/views/loginView.dart';
+import 'package:dalil/features/home.dart';
+import 'package:dalil/features/splash.dart';
 import 'package:dalil/notifications/notifications2/notificationManager.dart';
-import 'package:dalil/notifications/notifications2/testNotificationview.dart';
 import 'package:dalil/workManager/workManagerServices.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,6 +18,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+
   tz.initializeTimeZones();
 
   // ***** =>>>>> ~~~~~      Ziad Taha     ~~~~~ <<<<<=***** //
@@ -27,7 +32,7 @@ void main() async {
       >()
       ?.requestNotificationsPermission();
   await Future.wait([
-    cash.initialpref(),
+     cash.initialpref(),
     EasyLocalization.ensureInitialized(),
     NotificationManager.init(), // 1 sec
     Workmanagerservices().init(), // 2 sec
@@ -44,21 +49,22 @@ void main() async {
   //   await Workmanagerservices().init();    // 2 sec
   //   await Firebase.initializeApp(         // 3 sec
   //       options: DefaultFirebaseOptions.currentPlatform);
-  String? savedLang = cash.getLang();
+  String? savedLang = await cash.getLang();
   // savedLang='en';
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'assets/translations',
-      startLocale: savedLang.isNotEmpty ? Locale(savedLang) : const Locale('ar'),
-      fallbackLocale: const Locale('ar'),
+      startLocale: savedLang.isNotEmpty
+          ? Locale(savedLang)
+          : const Locale('en'),
+      fallbackLocale: const Locale('en'),
       child: const MyApp(),
     ),
   );
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -69,31 +75,34 @@ class MyApp extends StatelessWidget {
       enabled: true,
       builder: (context) {
         return BlocProvider(
-          create: (context) => authBloc(),
+          create: (context) => authBloc(repository: AuthRepo())..autoLogin(),
           child: MaterialApp(
             navigatorKey: navigatorKey,
-
 
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
 
-            // locale: DevicePreview.locale(context),
-            //
-            // supportedLocales: AppLocalizations.supportedLocales,
-            // localizationsDelegates: const [
-            //   AppLocalizations.delegate,
-            //   GlobalMaterialLocalizations.delegate,
-            //   GlobalWidgetsLocalizations.delegate,
-            //   GlobalCupertinoLocalizations.delegate,
-            // ],
-
             useInheritedMediaQuery: true,
             builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
-            home:  QRScannerScreen(),
+            home: BlocBuilder<authBloc, Authstate>(
+              builder: (context, state) {
+
+                if (state is AuthSuccess) {
+                  return const Home();
+                }
+
+                if (state is AuthInitial ) {
+                  return const Splash();
+                }
+
+
+                return Loginview();
+
+              },
           ),
-        );
+        ));
       },
     );
   }

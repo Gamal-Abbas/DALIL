@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dalil/core/utils/size.dart';
 import 'package:dalil/features/ArtifactDetails/view/chip.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,9 @@ class _MainContentCardState extends State<MainContentCard> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final height = size.height;
-    final width = size.width;
+    // final size = MediaQuery.of(context).size;
+    final height = context.screenHeight;
+    final width = context.screenWidth;
 
     print('Related =======================');
     print(widget.related);

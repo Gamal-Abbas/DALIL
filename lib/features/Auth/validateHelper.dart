@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ValidationHelper {
   static String? validateName(BuildContext context, String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'enterName'.tr(); // استخدام tr() ✅
+      return 'enterName'.tr();
     }
     if (value.length < 3) {
       return 'nameShort'.tr();
@@ -13,7 +13,9 @@ class ValidationHelper {
   }
 
   static String? validateEmail(BuildContext context, String? value) {
+    print('validate email==================00');
     if (value == null || value.trim().isEmpty) {
+      print('value == null || value.trim().isEmpty');
       return 'emailRequiredMessage'.tr();
     }
 
@@ -22,15 +24,17 @@ class ValidationHelper {
     );
 
     if (!emailRegExp.hasMatch(value)) {
+      print('!emailRegExp.hasMatch(value)');
       return 'enterValidDomain'.tr();
     }
 
     List<String> validDomains = ['.com', '.net', '.org', '.edu', '.eg', '.me'];
     bool hasValidDomain = validDomains.any(
-          (domain) => value.toLowerCase().endsWith(domain),
+      (domain) => value.toLowerCase().endsWith(domain),
     );
 
     if (!hasValidDomain) {
+      print('!hasValidDomain');
       return 'invalidDomain'.tr();
     }
 
@@ -48,10 +52,10 @@ class ValidationHelper {
   }
 
   static String? validateConfirmPassword(
-      BuildContext context,
-      String? value,
-      String password,
-      ) {
+    BuildContext context,
+    String? value,
+    String password,
+  ) {
     if (value != password) {
       return 'passwordsNotMatch'.tr();
     }

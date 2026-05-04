@@ -9,12 +9,12 @@ class cash {
 
 
   static Future<bool> setLang(String langCode) async {
-    return await pref.setString('language', langCode);
+    return await pref.setString('language', 'en');
   }
 
   static String getLang() {
     String? lang = pref.getString('language');
-    return (lang == null || lang.isEmpty) ? 'ar' : lang;
+    return (lang == null || lang.isEmpty) ? 'en' : lang;
   }
 
 

@@ -1,3 +1,4 @@
+import 'package:dalil/core/utils/size.dart';
 import 'package:dalil/features/ArtifactDetails/data/model/attrctionModel.dart';
 import 'package:dalil/features/ArtifactDetails/data/model/eraModel.dart';
 import 'package:dalil/features/ArtifactDetails/view/baseLayout.dart';
@@ -67,14 +68,14 @@ class _AttractionUIState extends State<AttractionUI> {
 
     const Color pharaohGold = Color(0xFFFFD700);
 print('build============');
-    final size = MediaQuery.of(context).size;
-    final height = size.height;
-    final width = size.width;
+    // final size = MediaQuery.of(context).size;
+    // final height = size.height;
+    // final width = size.width;
     return BaseLayout(
       title: widget.data.name,
       image: widget.data.image,
       child: Column(
-        spacing: (height/50).clamp(15, 20),    //15
+        spacing: (context.screenHeight/50).clamp(15, 20),    //15
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionTitle(eraInfo.name),
@@ -83,8 +84,8 @@ print('build============');
             widget.data.name,
             style: TextStyle(
               color: Colors.white,
-              fontSize: (height/20).clamp(40, 46),   //40
-              height: (height/700).clamp(1.1, 1.3), //1.1
+              fontSize: (context.screenHeight/20).clamp(40, 46),   //40
+              height: (context.screenHeight/700).clamp(1.1, 1.3), //1.1
               fontWeight: FontWeight.w900,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dalil/core/constants/app_color.dart';
+import 'package:dalil/core/utils/size.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -13,9 +14,9 @@ class AppDialogs {
     required Color iconColor,
     VoidCallback? btnOkOnPress,
   }) {
-    final size=MediaQuery.of(context).size;
-    final SH=size.height;
-    final SW=size.width;
+    // final size=MediaQuery.of(context).size;
+    // final SH=size.height;
+    // final SW=size.width;
     AwesomeDialog(
 
       context: context,
@@ -30,29 +31,29 @@ class AppDialogs {
         ),
         child: Icon(
           icon,
-          size: SH/10,//80
+          size: context.screenHeight/10,//80
           color: iconColor,
         ),
       ),
       body: Padding(
-        padding:  EdgeInsets.symmetric(vertical: SH/40.25,
-            horizontal: SW/39.2),//20  10
+        padding:  EdgeInsets.symmetric(vertical: context.screenHeight/40.25,
+            horizontal: context.screenWidth/39.2),//20  10
         child: Column(
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: SH/36.5,//22
+                fontSize: context.screenHeight/36.5,//22
                 fontWeight: FontWeight.bold,
                 color: AppColors.secondary,
               ),
             ),
-            Gap(SH/80),//10
+            Gap(context.screenHeight/80),//10
             Text(
               desc,
               textAlign: TextAlign.center,
               style:  TextStyle(
-                fontSize: SH/50,//16
+                fontSize: context.screenHeight/50,//16
                 color: AppColors.thirdDark,
               ),
             ),
