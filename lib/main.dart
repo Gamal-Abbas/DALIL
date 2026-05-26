@@ -5,12 +5,16 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'firebase_options.dart';
 import 'core/di/injection_container.dart' as di;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
+
+  FirebaseFirestore.instance.settings =
+      const Settings(persistenceEnabled: true);
 
   await di.init();
 

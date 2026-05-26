@@ -40,9 +40,7 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    // ignore: deprecated_member_use
                     Colors.black.withOpacity(0.6),
-                    // ignore: deprecated_member_use
                     Colors.black.withOpacity(0.9),
                   ],
                   begin: Alignment.topCenter,
@@ -51,36 +49,46 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+
           SafeArea(
-            child: ListView(
-              children: [
-                SizedBox(height: width * 0.05),
-                _buildHeader(context),
-                _buildSection(
-                  context: context,
-                  title: loc.attractions,
-                  icon: Icons.account_balance,
-                  collection: "attractions",
-                  stream: service.getPlaces("attractions"),
-                  lang: lang,
-                ),
-                _buildSection(
-                  context: context,
-                  title: loc.kings,
-                  icon: Icons.workspace_premium,
-                  collection: "kings",
-                  stream: service.getPlaces("kings"),
-                  lang: lang,
-                ),
-                _buildSection(
-                  context: context,
-                  title: loc.eras,
-                  icon: Icons.history,
-                  collection: "eras",
-                  stream: service.getPlaces("eras"),
-                  lang: lang,
-                ),
-              ],
+            child: RefreshIndicator(
+              color: const Color(0xFFE5C158),
+              onRefresh: () async {
+                await Future.delayed(const Duration(milliseconds: 800));
+              },
+              child: ListView(
+                children: [
+                  SizedBox(height: width * 0.05),
+                  _buildHeader(context),
+
+                  _buildSection(
+                    context: context,
+                    title: loc.attractions,
+                    icon: Icons.account_balance,
+                    collection: "attractions",
+                    stream: service.getPlaces("attractions"),
+                    lang: lang,
+                  ),
+
+                  _buildSection(
+                    context: context,
+                    title: loc.kings,
+                    icon: Icons.workspace_premium,
+                    collection: "kings",
+                    stream: service.getPlaces("kings"),
+                    lang: lang,
+                  ),
+
+                  _buildSection(
+                    context: context,
+                    title: loc.eras,
+                    icon: Icons.history,
+                    collection: "eras",
+                    stream: service.getPlaces("eras"),
+                    lang: lang,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -179,19 +187,35 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
+
           SizedBox(height: width * 0.04),
+
           SizedBox(
             height: width * 0.6,
             child: StreamBuilder<List<PlaceModel>>(
               stream: stream,
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
 
-                final data = snapshot.data!;
+                if (snapshot.hasError) {
+                  return const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.wifi_off, color: Colors.white70),
+                      SizedBox(height: 10),
+                      Text(
+                        "No Internet or weak connection",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ],
+                  );
+                }
+
+                final data = snapshot.data ?? [];
 
                 return ListView.builder(
                   scrollDirection: Axis.horizontal,
