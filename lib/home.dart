@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
+///////////////
   Widget _navItem(
     BuildContext context, {
     required int index,
