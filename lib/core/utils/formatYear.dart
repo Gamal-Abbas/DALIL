@@ -1,16 +1,30 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
+
 class FormatYear {
-  final dynamic year;
+  static String formatYear(String year, [BuildContext? context]) {
+    if (year.isEmpty) return "??";
 
-  FormatYear({required this.year});
+    final bc = context != null ? 'bC'.tr() : 'B.C';
+    final ad = context != null ? 'c'.tr() : 'C';
 
-  static String formatYear(String year) {
-    if (year == null || year.toString().isEmpty) return "??";
     String yStr = year.toString();
+
     if (yStr.contains('-')) {
-      // return "${yStr.replaceAll('-', '')} ق.م";
-      return "${yStr.replaceAll('-', '')} B.C";
+      final number = yStr.replaceAll('-', '');
+      return "$number $bc";
     }
-    // return "$yStr م";
-    return "$yStr C";
+
+    return "$yStr $ad";
+  }
+
+  static String formatRange(String from, String to, [BuildContext? context]) {
+    final fromNum = int.tryParse(from) ?? 0;
+    final toNum = int.tryParse(to) ?? 0;
+
+    final older = fromNum < toNum ? from : to;
+    final newer = fromNum < toNum ? to : from;
+
+    return "${formatYear(older, context)} - ${formatYear(newer, context)}";
   }
 }

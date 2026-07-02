@@ -61,7 +61,6 @@ class EraUI extends StatelessWidget {
               height,
             ),
 
-          // الوصف النصي مباشرة
           Text(
             "about_this_era".tr(),
             style: TextStyle(
@@ -99,7 +98,8 @@ class EraUI extends StatelessWidget {
           const Icon(Icons.history_toggle_off, color: Colors.amber, size: 20),
           const Gap(10),
           Text(
-            "${FormatYear.formatYear(start.toString()) ?? '...'}  ${FormatYear.formatYear(end.toString()) ?? '...'}",
+            FormatYear.formatRange(start.toString(), end.toString(), )
+            ,
             style: TextStyle(
               color: Colors.white,
               fontSize: (height / 47).clamp(17, 34), //17

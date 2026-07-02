@@ -31,7 +31,7 @@ class LoginForm extends StatelessWidget {
             textEditingController: emailController,
             textInputAction: TextInputAction.next,
             validator: (value) {
-              return ValidationHelper.validateEmail(context, value);
+              return ValidationHelper.validateEmail(value);
             },
           ),
           Gap((MediaQuery.sizeOf(context).height) / 40),
@@ -44,7 +44,7 @@ class LoginForm extends StatelessWidget {
             textInputAction: TextInputAction.done,
             onFieldSubmitted: onLogin,
             validator: (value) {
-              return ValidationHelper.validatePassword(context, value);
+              return ValidationHelper.validatePassword( value);
             },
           ),
         ],

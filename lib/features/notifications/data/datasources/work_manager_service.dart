@@ -1,9 +1,11 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
+import '../../../../core/constants/cash.dart';
 import '../../data/repositories/notiication_repo.dart';
 import 'firebase_service.dart';
 
@@ -11,12 +13,20 @@ import 'firebase_service.dart';
 void action() {
   Workmanager().executeTask((taskName, inputData) async {
     try {
-      print("Background Task Started Successfully!");
       WidgetsFlutterBinding.ensureInitialized();
       tz.initializeTimeZones();
       await Firebase.initializeApp();
-      await NotificationRepo.init();
 
+      await cash.initialPref();
+      final lang = cash.getLang();
+      print('Background Lang: $lang');
+      final enabled = cash.pref.getBool('notifications_enabled') ?? true;
+      if (!enabled) {
+        print('🔕 Notifications disabled - skipping');
+        return Future.value(true);
+      }
+
+      await NotificationRepo.init();
       await FirebaseService.retrieveRandom_Id_FromFirebase();
 
       return Future.value(true);
@@ -49,6 +59,6 @@ class WorkManagerService {
   }
 
   Future<void> cancelWorkManager() async {
-    await Workmanager().cancelByUniqueName('id1');
+    await Workmanager().cancelAll();
   }
 }

@@ -5,12 +5,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../../../main.dart';
-import '../../../artifacts_3d/data/models/baseModel.dart';
-import '../../../artifacts_3d/data/models/eraModel.dart';
-import '../../../artifacts_3d/presentation/pages/dispatcher.dart';
+
+import '../../../ai_guide/data/models/attrctionModel.dart';
+import '../../../ai_guide/data/models/baseModel.dart';
+import '../../../ai_guide/data/models/eraModel.dart';
+import '../../../ai_guide/data/models/kingModel.dart';
+import '../../../ai_guide/presentation/pages/dispatcher.dart';
 import '../../data/repositories/notiication_repo.dart';
 import 'firebase_service.dart';
-
 class NotificationService {
   static Future<void> checkInitialNotification(BuildContext context) async {
     final NotificationAppLaunchDetails? launchDetails = await NotificationRepo
@@ -29,9 +31,10 @@ class NotificationService {
   }
 
   static Future<void> handleNavigation(
-    BuildContext context,
-    String payload,
-  ) async {
+      BuildContext context,
+      String payload,
+      )
+  async {
     print("NAVIGATING WITH PAYLOAD: $payload");
 
     String id;
@@ -50,11 +53,19 @@ class NotificationService {
     final data = await FirebaseService.getDataFromFirebase_By_Id(id: id);
     if (data == null) return;
 
+    // BaseModel model;
+    // if (data['collectionType'] == 'eras') {
+    //   model = EraModel.fromJson(data);
+    // } else {
+    //   model = BaseModel.fromJson(data);
+    // }
     BaseModel model;
     if (data['collectionType'] == 'eras') {
       model = EraModel.fromJson(data);
+    } else if (data['collectionType'] == 'attractions') {
+      model = AttractionModel.fromJson(data); // ✅
     } else {
-      model = BaseModel.fromJson(data);
+      model = KingModel.fromJson(data); // لو فيه kingModel كمان
     }
     print('Model=$model');
 
@@ -73,7 +84,8 @@ class NotificationService {
     required String body,
     required String payload,
     required String lang,
-  }) async {
+  })
+  async {
     try {
       final androidDetails = AndroidNotificationDetails(
         enableVibration: true,
@@ -90,33 +102,40 @@ class NotificationService {
       var location = tz.getLocation('Africa/Cairo');
       var currentTime = tz.TZDateTime.now(location);
 
-      var scheduledTime = tz.TZDateTime.now(
-        location,
-      ).add(const Duration(seconds: 10));
+      // var scheduledTime = tz.TZDateTime.now(
+      //   location,
+      // ).add(const Duration(seconds: 10));
 
-      //   var scheduledTime=
-      //        tz.TZDateTime(
-      //            location,
-      //          currentTime.year,
-      //          currentTime.month,
-      //          currentTime.day,
-      //          currentTime.hour,
-      //          24
+      //  بدل tz.getLocation استخدم local timezon
       //
+      // var scheduledTime = tz.TZDateTime.now(tz.local).add(
+      //   const Duration(seconds: 10),
       // );
+        var scheduledTime=
+             tz.TZDateTime(
+                 location,
+               currentTime.year,
+               currentTime.month,
+               currentTime.day,
+               currentTime.hour,
+               24
+
+      );
 
       if (scheduledTime.isBefore(currentTime)) {
         scheduledTime = scheduledTime.add(const Duration(hours: 1));
       }
 
-      await NotificationRepo.flutterLocalNotificationsPlugin.zonedSchedule(
-        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      await NotificationRepo.
+      flutterLocalNotificationsPlugin.zonedSchedule(
+        // id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        id: 1,
         title: lang == 'ar' ? '\u202B' + title : title,
         body: lang == 'ar' ? '\u202B' + body : body,
         notificationDetails: details,
         payload: payload,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
+        // androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
         scheduledDate: scheduledTime,
       );
 

@@ -4,6 +4,7 @@ class AttractionModel extends BaseModel {
   final String eraId;
   final String location;
   final List relatedKings;
+  final double? price;
 
   AttractionModel({
     required super.id,
@@ -14,6 +15,7 @@ class AttractionModel extends BaseModel {
     required this.eraId,
     required this.location,
     required this.relatedKings,
+    this.price,
   });
 
   factory AttractionModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,18 @@ class AttractionModel extends BaseModel {
       eraId: json['eraId'] ?? '',
       location: json['location'] ?? '',
       relatedKings: json['relatedKings'] ?? [],
+      price: json['price'] != null ? (json['price']).toDouble() : null, // 🆕
     );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'eraId': eraId,
+      'location': location,
+      'relatedKings': relatedKings,
+      'price': price,
+    };
   }
 }

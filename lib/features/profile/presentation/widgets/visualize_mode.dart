@@ -1,45 +1,45 @@
 import 'package:depi_dalil/core/theme/text_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/theme_cubit.dart';
 import '../../../../core/theme/theme_extension.dart';
 import '../../../../core/utils/size.dart';
+import '../../../../main.dart';
 import '../../../auth/presentation/manager/authBloc.dart';
 import '../../../auth/presentation/pages/loginView.dart';
+import '../manager/profile_cubit.dart';
 
-class VisualMode extends StatelessWidget {
-  const VisualMode();
+class ThemeModeSelector extends StatelessWidget {
+  const ThemeModeSelector();
 
   @override
   Widget build(BuildContext context) {
     final height = context.screenHeight;
+    final width = context.screenWidth;
 
     return RepaintBoundary(
       child: BlocBuilder<ThemeCubit, bool>(
         builder: (context, isDark) => Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(width / 24),
           child: Row(
             children: [
-              ModeOption(
+              ThemeModeCard(
                 bgColor: const Color(0xFF1A1A1A),
                 lineColor: Colors.white24,
                 lineColorSecond: Colors.white12,
                 isSelected: isDark,
-                height: height,
                 onTap: () {
                   if (!isDark) context.read<ThemeCubit>().toggleTheme();
                 },
               ),
-              const SizedBox(width: 12),
-              ModeOption(
+              SizedBox(width: width / 32),
+              ThemeModeCard(
                 bgColor: const Color(0xFFE5E2E1),
                 lineColor: Colors.black26,
                 lineColorSecond: Colors.black12,
                 isSelected: !isDark,
-                height: height,
                 onTap: () {
                   if (isDark) context.read<ThemeCubit>().toggleTheme();
                 },
@@ -52,20 +52,21 @@ class VisualMode extends StatelessWidget {
   }
 }
 
-// ✅ الـ Labels منفصلة عن الـ BlocBuilder عشان متعملش rebuild معاه
-class VisualModeLabels extends StatelessWidget {
-  const VisualModeLabels();
+class ThemeModeLabels extends StatelessWidget {
+  const ThemeModeLabels({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final width = context.screenWidth;
+
     return RepaintBoundary(
       child: BlocBuilder<ThemeCubit, bool>(
         builder: (context, isDark) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: EdgeInsets.only(bottom: width / 32),
           child: Row(
             children: [
-              ModeLabel(text: 'Dark', isSelected: isDark),
-              ModeLabel(text: 'Light', isSelected: !isDark),
+              ThemeModeText(text: 'Dark'.tr(), isSelected: isDark),
+              ThemeModeText(text: 'Light'.tr(), isSelected: !isDark),
             ],
           ),
         ),
@@ -74,26 +75,26 @@ class VisualModeLabels extends StatelessWidget {
   }
 }
 
-// ✅ بدل تكرار NOX/LUX
-class ModeOption extends StatelessWidget {
+class ThemeModeCard extends StatelessWidget {
   final Color bgColor;
   final Color lineColor;
   final Color lineColorSecond;
   final bool isSelected;
-  final double height;
   final VoidCallback onTap;
 
-  const ModeOption({
+  const ThemeModeCard({
     required this.bgColor,
     required this.lineColor,
     required this.lineColorSecond,
     required this.isSelected,
-    required this.height,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final height = context.screenHeight;
+    final width = context.screenWidth;
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -103,7 +104,7 @@ class ModeOption extends StatelessWidget {
           height: height / 8,
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(width / 32),
             border: Border.all(
               color: isSelected
                   ? context.colorScheme.primary
@@ -114,8 +115,8 @@ class ModeOption extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _Line(color: lineColor, width: 60, height: 6),
-              _Line(color: lineColorSecond, width: 40, height: 4),
+              _PreviewLine(color: lineColor, width: width / 6, height: height / 140),
+              _PreviewLine(color: lineColorSecond, width: width / 9, height: height / 200),
             ],
           ),
         ),
@@ -124,20 +125,24 @@ class ModeOption extends StatelessWidget {
   }
 }
 
-// ✅ بدل تكرار الـ Container بتاع الخطوط
-class _Line extends StatelessWidget {
+class _PreviewLine extends StatelessWidget {
   final Color color;
   final double width;
   final double height;
 
-  const _Line({required this.color, required this.width, required this.height});
+  const _PreviewLine({required this.color, required this.width, required this.height});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = context.screenWidth;
+
     return Container(
       width: width,
       height: height,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: EdgeInsets.symmetric(
+        horizontal: screenWidth / 24,
+        vertical: screenWidth / 80,
+      ),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(3),
@@ -146,12 +151,11 @@ class _Line extends StatelessWidget {
   }
 }
 
-// ✅ بدل تكرار الـ Text بتاع Dark/Light
-class ModeLabel extends StatelessWidget {
+class ThemeModeText extends StatelessWidget {
   final String text;
   final bool isSelected;
 
-  const ModeLabel({required this.text, required this.isSelected});
+  const ThemeModeText({required this.text, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -169,58 +173,32 @@ class ModeLabel extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ✅ Deactivate منفصلة
-class LogOutButton extends StatelessWidget {
-
-
-  const LogOutButton();
+class SignOutButton extends StatelessWidget {
+  const SignOutButton();
 
   @override
   Widget build(BuildContext context) {
     final height = context.screenHeight;
+    final width = context.screenWidth;
 
     return GestureDetector(
-      onTap: (){
-        _showLogoutDialog(context);
-      },
+      onTap: () => _showLogoutDialog(context),
       behavior: HitTestBehavior.opaque,
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: height / 55),
         decoration: BoxDecoration(
           color: context.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(width / 24),
           border: Border.all(color: Colors.red.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.logout, color: Colors.red, size: 20),
-            const SizedBox(width: 10),
+            Icon(Icons.logout, color: Colors.red, size: width / 20),
+            SizedBox(width: width / 40),
             Text(
-              'LogOut',
+              'logout'.tr(),
               style: context.body18?.copyWith(
                 color: Colors.red,
                 fontWeight: FontWeight.bold,
@@ -233,20 +211,16 @@ class LogOutButton extends StatelessWidget {
     );
   }
 
-
-
-
-
-
-
-
-
   void _showLogoutDialog(BuildContext context) {
+    final width = context.screenWidth;
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(width / 20),
+        ),
         title: Text('logout'.tr(), style: context.title27),
         content: Text('logoutConfirm'.tr(), style: context.body16),
         actions: [
@@ -259,14 +233,16 @@ class LogOutButton extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              await context.read<authBloc>().signOut();
-              if (context.mounted) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => Loginview()),
-                      (route) => false,
-                );
-              }
+              final profileCubit = context.read<ProfileCubit>();
+              final bloc = context.read<authBloc>();
+
+              profileCubit.reset();
+              await bloc.signOut();
+
+              navigatorKey.currentState?.pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => Loginview()),
+                    (route) => false,
+              );
             },
             child: Text(
               'logout'.tr(),
@@ -277,16 +253,4 @@ class LogOutButton extends StatelessWidget {
       ),
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -3,12 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class cash {
   static late SharedPreferences pref;
 
-  static Future<void> initialpref() async {
+  static Future<void> initialPref() async {
     pref = await SharedPreferences.getInstance();
   }
 
   static Future<bool> setLang(String langCode) async {
-    return await pref.setString('language', 'en');
+    return await pref.setString('language', langCode);
   }
 
   static String getLang() {

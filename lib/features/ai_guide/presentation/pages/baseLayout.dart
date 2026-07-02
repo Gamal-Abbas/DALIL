@@ -3,6 +3,7 @@ import 'package:depi_dalil/core/theme/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
+import '../../../../core/utils/size.dart';
 import '../widgets/buidGredientOverlay.dart';
 import '../widgets/buildHeroImage.dart';
 
@@ -32,11 +33,12 @@ class BaseLayout extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
+            SizedBox(height: context.screenHeight / 16),
+
                 _buildBackButton(context),
-                Gap(MediaQuery.of(context).size.height * 0.45),
+                Gap(context.screenHeight * 0.45),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: context.screenWidth / 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [child],

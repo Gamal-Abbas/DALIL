@@ -15,14 +15,14 @@ import '../widgets/signUpForm.dart';
 import '../widgets/signUpHeader.dart';
 import '../widgets/socailSignUpSection.dart';
 
-class SignupView extends StatefulWidget {
-  SignupView({super.key});
+class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
 
   @override
-  State<SignupView> createState() => _SignupViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _SignupViewState extends State<SignupView> {
+class _SignUpViewState extends State<SignUpView> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -72,7 +72,7 @@ class _SignupViewState extends State<SignupView> {
                     Gap(context.screenHeight / 20),
                     const authLogo(),
                     const SignUpHeader(),
-                    Signupform(
+                    SignUpForm(
                       formKey: _formKey,
                       nameController: nameController,
                       emailController: emailController,
@@ -82,7 +82,7 @@ class _SignupViewState extends State<SignupView> {
                         onSubmitted();
                       },
                     ),
-                    Signupbutton(
+                    SignUpButton(
                       label: state is AuthLoading ? 'loading'.tr() : 'signUp'.tr(),
                       onPressed: state is AuthLoading
                           ? () {}
@@ -92,7 +92,7 @@ class _SignupViewState extends State<SignupView> {
                         }
                       },
                     ),
-                    const socialSignUpSection(),
+                    const SocialSignUpSection(),
                     const Haveaccountsection(),
                   ],
                 );

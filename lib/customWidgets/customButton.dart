@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../core/constants/app_color.dart';
 import '../core/utils/size.dart';
 
@@ -11,9 +10,9 @@ class customButton extends StatelessWidget {
   final double buttonHeight;
   final Color buttonColor;
   final Color textColor;
-
   final VoidCallback onPressed;
   final double width;
+  final bool isLoading;
 
   const customButton({
     super.key,
@@ -26,6 +25,7 @@ class customButton extends StatelessWidget {
     required this.buttonHeight,
     required this.buttonColor,
     required this.textColor,
+    this.isLoading = false,
   });
 
   @override
@@ -36,7 +36,10 @@ class customButton extends StatelessWidget {
       width: buttonWeight,
       height: buttonHeight,
       child: ElevatedButton(
+
         style: ElevatedButton.styleFrom(
+          disabledBackgroundColor: buttonColor,
+          disabledForegroundColor: textColor,
           backgroundColor: buttonColor,
           foregroundColor: textColor,
           shape: RoundedRectangleBorder(
@@ -45,13 +48,22 @@ class customButton extends StatelessWidget {
           elevation: 9,
           shadowColor: AppColors.secondary,
         ),
-        onPressed: onPressed,
-        child: Text(
+        onPressed: isLoading ? null : onPressed,
+        child: isLoading
+            ? SizedBox(
+          width: textSize,
+          height: textSize,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: textColor,
+          ),
+        )
+            : Text(
           text,
           style: TextStyle(
             fontSize: textSize,
             fontWeight: fontWeight,
-            letterSpacing: (SW / 350).clamp(1.1, 4.4), //1.1
+            letterSpacing: (SW / 350).clamp(1.1, 4.4),
           ),
         ),
       ),

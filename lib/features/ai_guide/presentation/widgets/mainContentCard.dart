@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:depi_dalil/features/artifacts_3d/presentation/widgets/relatedSection.dart';
+import 'package:depi_dalil/features/ai_guide/presentation/widgets/relatedSection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_color.dart';
@@ -46,8 +46,8 @@ class _MainContentCardState extends State<MainContentCard> {
     // build one time only
     print('didChangeDependencies =======================');
     super.didChangeDependencies();
-    // دي بتشتغل بس لما حجم الشاشة يتغير (Rotation مثلاً)
-    // أو أول ما الكود يشتغل، مش مع كل setState
+
+
     height = context.screenHeight;
     width = context.screenWidth;
     height_divise_45 = (height / 45).clamp(18, 36);

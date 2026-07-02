@@ -29,9 +29,7 @@ class Forggetpassword extends StatelessWidget {
   }
 
   Future<void> resetPasswordTap(BuildContext context)async{
-    await context.read<authBloc>().handleResetPassword(
-      context: context,
-      email: email,
-    );
+    await context.read<authBloc>().resetPassword(email: email);
+
   }
 }

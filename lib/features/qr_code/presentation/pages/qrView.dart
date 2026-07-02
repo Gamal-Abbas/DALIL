@@ -3,11 +3,9 @@ import 'package:depi_dalil/core/theme/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart' as ms;
-
-import '../../../../core/constants/app_color.dart';
 import '../../../../core/utils/size.dart';
-import '../../../artifacts_3d/data/models/baseModel.dart';
-import '../../../artifacts_3d/presentation/pages/dispatcher.dart';
+import '../../../ai_guide/data/models/baseModel.dart';
+import '../../../ai_guide/presentation/pages/dispatcher.dart';
 import '../manager/qrBloc.dart';
 import '../manager/qrState.dart';
 import '../widgets/scanInstruction.dart';
@@ -78,7 +76,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         appBar: appbar(),
         body: Stack(
           children: [
-            BlocListener<qrBloc, qrState>(
+            BlocListener<qrBloc, QrState>(
               listener: (context, state) {},
               child: ms.MobileScanner(
                 controller: cameraController,
@@ -86,7 +84,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 onDetect: (capture) {
                   final barcodes = capture.barcodes;
                   if (barcodes.isNotEmpty && barcodes.first.rawValue != null) {
-                    // إيقاف الكاميرا فوراً لمنع التكرار
                     cameraController.stop();
 
                     context.read<qrBloc>().processCode(
@@ -150,9 +147,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        BlocConsumer<qrBloc, qrState>(
+        BlocConsumer<qrBloc, QrState>(
           listener: (context, state) {
-            if (state is qrSucces) {
+            if (state is QrSucces) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -161,7 +158,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   ),
                 ),
               ).then((value) => cameraController.start());
-            } else if (state is qrLoading) {
+            } else if (state is QrLoading) {
               CircularProgressIndicator();
             }
           },

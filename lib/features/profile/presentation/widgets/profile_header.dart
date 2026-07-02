@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:depi_dalil/core/theme/text_theme.dart';
 import 'package:depi_dalil/core/utils/size.dart';
 import 'package:flutter/material.dart';
@@ -10,84 +11,82 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width=context.screenWidth;
-    final height=context.screenHeight;
-    return Column(
-      spacing: height / 40,
-      children: [
-        GestureDetector(
-          onTap: () {},
-          child: Stack(
-            children: [
-              Container(
-                width: width / 3,
-                height: width / 3,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(width/20),
-                  border: Border.all(
-                    color: context.colorScheme.primary,
-                    width: height/400,
-                  ),
-                  color: context.cardColor,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
-                  child: Icon(
-                    Icons.person,
-                    size: width / 5,
-                    color: context.colorScheme.primary,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
+    final width = context.screenWidth;
+    final height = context.screenHeight;
+
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        final imagePath = state is ProfileLoaded ? state.imagePath : null;
+        final name = state is ProfileLoaded ? state.user.name : null;
+
+        return Column(
+          spacing: height / 40,
+          children: [
+            GestureDetector(
+              onTap: () => context.read<ProfileCubit>().pickImage(),
+              child: Stack(
+                children: [
+                  Container(
+                    width: width / 3,
+                    height: width / 3,
                     decoration: BoxDecoration(
-                      color: context.colorScheme.primary,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(width / 20),
+                      border: Border.all(
+                        color: context.colorScheme.primary,
+                        width: height / 400,
+                      ),
+                      color: context.cardColor,
                     ),
-                    child: Icon(
-                      Icons.edit,
-                      size: width/25,
-                      color: context.scaffoldBg,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(width / 20),
+                      child: imagePath != null
+                          ? Image.file(
+                        File(imagePath),
+                        fit: BoxFit.cover,
+                        width: width / 3,
+                        height: width / 3,
+                      )
+                          : Icon(
+                        Icons.person,
+                        size: width / 5,
+                        color: context.colorScheme.primary,
+                      ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => context.read<ProfileCubit>().pickImage(),
+                      child: Container(
+                        padding: EdgeInsets.all(width / 30),
+                        decoration: BoxDecoration(
+                          color: context.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(width / 30),
+                        ),
+                        child: Icon(
+                          Icons.edit,
+                          size: width / 25,
+                          color: context.scaffoldBg,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
 
-
-
-        // ── Name ──
-        BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context,state){
-            return state is ProfileLoaded?
-             Text(
-               state.user.name,
-              style: context.headline40?.copyWith(fontWeight: FontWeight.w900),
-            ):CircularProgressIndicator();
-          },
-
-        ),
-
-
-
-        // ── Role ──
-        Text(
-          'CHIEF CURATOR',
-          style: context.body14?.copyWith(
-            color: context.colorScheme.primary,
-            letterSpacing: 3,
-
-          ),
-        ),
-      ],
+            name != null
+                ? Text(
+              name,
+              style: context.headline40?.copyWith(
+                fontWeight: FontWeight.w900,
+              ),
+            )
+                : CircularProgressIndicator(),
+          ],
+        );
+      },
     );
   }
 }

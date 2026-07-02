@@ -6,8 +6,8 @@ import '../../../../core/utils/size.dart';
 import '../../../../customWidgets/customText.dart';
 import '../pages/signUpView.dart';
 
-class noAccountSection extends StatelessWidget {
-  const noAccountSection({super.key});
+class NoAccountSection extends StatelessWidget {
+  const NoAccountSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class noAccountSection extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (c) => SignupView()),
+              MaterialPageRoute(builder: (c) => SignUpView()),
             );
           },
           child: Customtext(

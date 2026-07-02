@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart'; // تم تغيير ا
 import 'package:flutter/material.dart';
 
 class ValidationHelper {
-  static String? validateName(BuildContext context, String? value) {
+  static String? validateName( String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'enterName'.tr();
     }
@@ -12,7 +12,7 @@ class ValidationHelper {
     return null;
   }
 
-  static String? validateEmail(BuildContext context, String? value) {
+  static String? validateEmail( String? value) {
     print('validate email==================00');
     if (value == null || value.trim().isEmpty) {
       print('value == null || value.trim().isEmpty');
@@ -41,7 +41,7 @@ class ValidationHelper {
     return null;
   }
 
-  static String? validatePassword(BuildContext context, String? value) {
+  static String? validatePassword( String? value) {
     if (value == null || value.isEmpty) {
       return 'passwordRequired'.tr();
     }
@@ -52,7 +52,7 @@ class ValidationHelper {
   }
 
   static String? validateConfirmPassword(
-    BuildContext context,
+
     String? value,
     String password,
   ) {

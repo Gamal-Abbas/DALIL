@@ -5,8 +5,8 @@ import '../../../../core/theme/theme_extension.dart';
 import '../../../../core/utils/size.dart';
 import '../../../../customWidgets/customText.dart';
 
-class welcomeSection extends StatelessWidget {
-  const welcomeSection({super.key});
+class WelcomeSection extends StatelessWidget {
+  const WelcomeSection({super.key});
 
   @override
   Widget build(BuildContext context) {

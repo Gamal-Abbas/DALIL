@@ -4,11 +4,11 @@ import '../../../../core/theme/theme_extension.dart';
 import '../../../../core/utils/size.dart';
 import '../../../../customWidgets/customButton.dart';
 
-class Signupbutton extends StatelessWidget {
+class SignUpButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
 
-  const Signupbutton({super.key, required this.onPressed, required this.label});
+  const SignUpButton({super.key, required this.onPressed, required this.label});
 
   @override
   Widget build(BuildContext context) {

@@ -64,7 +64,7 @@ class Customtextformfield extends StatelessWidget {
         ),
       ),
       style: TextStyle(
-        color: context.colorScheme.secondary,
+        color: context.colorScheme.primary,
         fontStyle: FontStyle.italic,
       ),
       onFieldSubmitted: onFieldSubmitted,

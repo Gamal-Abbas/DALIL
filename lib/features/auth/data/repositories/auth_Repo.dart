@@ -1,57 +1,109 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-import '../../../../core/utils/validateHelper.dart';
+import '../../../../../core/utils/validateHelper.dart';
 import '../../presentation/manager/authState.dart';
 
-class AuthRepo {
-  final storage = FlutterSecureStorage();
+abstract class IEmailAuth {
+  Future<Authstate> checkVerification({
+    // 🆕
+    required String email,
+    required String password,
+  });
+  Future<Authstate> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+  Future<Authstate> resetPassword({required String email});
 
-  Future<void> deleteToken() async {
-    await storage.delete(key: 'token');
-  }
+  Future<UserCredential> signIn({required email, required password});
+  Future<Authstate> signUp({
+    required String email,
+    required String password,
+    required String name,
+  });
+  Future<void> signOut();
+}
 
-  Future<void> signOut() async {
+abstract class ISocialAuth {
+  Future<UserCredential?> signIn();
+  Future<void> signOut();
+}
+
+class EmailAuth implements IEmailAuth {
+  final IUserStorage _user;
+  EmailAuth(this._user);
+  @override
+  @override
+  Future<Authstate> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
     try {
-      await Future.wait([
-        FirebaseAuth.instance.signOut(),
-        GoogleSignIn.instance.disconnect(),
-        deleteToken(),
-      ]);
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return AuthError(message: 'error'.tr());
+
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+      return AuthSuccess();
+    } on FirebaseAuthException catch (e) {
+      final message = switch (e.code) {
+        'wrong-password' || 'invalid-credential' => 'wrong_password'.tr(),
+        'weak-password' => 'passwordLength'.tr(),
+        'network-request-failed' => 'no_internet'.tr(),
+        _ => 'error'.tr(),
+      };
+      return AuthError(message: message);
     } catch (e) {
-      throw e.toString();
+      return AuthError(message: 'error'.tr());
     }
   }
 
-  //   Future<void> signOut_Email() async {
-  //     try{
-  //       await Future.wait([FirebaseAuth.instance.signOut(),deleteToken()]);
-  //     }
-  //     catch(e){
-  //       throw e.toString();
-  //     }
-  //   }
-  //
-  //   Future<void> signOut_google() async {
-  // try{
-  //   await Future.wait([GoogleSignIn.instance.disconnect(),deleteToken()]);
-  //
-  //
-  // }
-  // catch(e){
-  //   throw e.toString();
-  // }
-  //   }
-
-  Future<Authstate> handleResetPassword({
+  @override
+  Future<Authstate> checkVerification({
     required String email,
-    required BuildContext context,
+    required String password,
   }) async {
+    try {
+      final userCredential = await signIn(email: email, password: password);
+      final user = userCredential.user;
+      if (user == null) return AuthError(message: 'Error');
+      await user.reload();
+      if (user.emailVerified) return AuthSuccess();
+      return await _handleUnVerified(user);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' ||
+          e.code == 'wrong-password' ||
+          e.code == 'invalid-credential') {
+        return AuthError(message: 'invalidCredentials'.tr());
+      } else if (e.code == 'network-request-failed') {
+        return AuthError(message: 'No Internet Connection'.tr());
+      }
+      return AuthError(message: e.message ?? 'An error occurred'.tr());
+    }
+  }
+
+  Future<Authstate> _handleUnVerified(User user) async {
+    final difference = DateTime.now().difference(user.metadata.creationTime!);
+    if (difference.inDays >= 3) {
+      await user.delete();
+      return AuthDeleted(
+        message: "حسابك القديم انتهت صلاحية تفعيله، برجاء التسجيل من جديد.",
+      );
+    }
+    await user.sendEmailVerification();
+    await signOut();
+    return authVerified(isVerified: false);
+  }
+
+  Future<Authstate> resetPassword({required String email}) async {
     final String _email = email.trim();
     print('reset===================');
 
@@ -62,7 +114,7 @@ class AuthRepo {
         return emailEmpty();
         // emit(emailEmpty());
       } else {
-        final validator = ValidationHelper.validateEmail(context, _email);
+        final validator = ValidationHelper.validateEmail(_email);
         if (validator != null) {
           print('1=========');
           return AuthError(message: validator);
@@ -88,67 +140,8 @@ class AuthRepo {
     }
   }
 
-  Future<Authstate> checkVerication({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final userCredential = await loginEmail(email: email, password: password);
-
-      final user = userCredential.user;
-      if (user != null) {
-        await user.reload();
-
-        if (!(user.emailVerified)) {
-          DateTime creationTime = user.metadata.creationTime!;
-          DateTime now = DateTime.now();
-          Duration difference = now.difference(creationTime);
-
-          if (difference.inDays >= 3) {
-            try {
-              await user.delete();
-              return AuthDeleted(
-                message:
-                    "حسابك القديم انتهت صلاحية تفعيله، برجاء التسجيل من جديد.",
-              );
-            } catch (e) {
-              return AuthDeleted(message: e.toString());
-            }
-          } else {
-            await user.sendEmailVerification();
-            await signOut();
-            return authVerified(isVerified: false);
-          }
-        } else {
-          return AuthSuccess(Google: true);
-        }
-      } else {
-        return AuthError(message: 'Error');
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMsg;
-      if (e.code == 'user-not-found' ||
-          e.code == 'wrong-password' ||
-          e.code == 'invalid-credential') {
-        errorMsg = 'invalidCredentials'.tr();
-      } else if (e.code == 'network-request-failed') {
-        errorMsg = 'No Internet Connection'.tr();
-      } else {
-        errorMsg = e.message ?? 'An error occurred'.tr();
-      }
-      return AuthError(message: errorMsg);
-    }
-  }
-
-  Future<UserCredential> loginEmail({required email, required password}) async {
-    return await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////
-  Future<Authstate> signupEmail({
+  @override
+  Future<Authstate> signUp({
     required String email,
     required String password,
     required String name,
@@ -160,7 +153,11 @@ class AuthRepo {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       if (credential.user != null) {
-        storeUserData(email: email, name: name, userCredential: credential);
+        _user.storeUserData(
+          email: email,
+          name: name,
+          userCredential: credential,
+        );
         FirebaseAuth.instance.currentUser!.sendEmailVerification();
         return AuthSuccess();
         // emit(AuthSuccess());
@@ -191,33 +188,28 @@ class AuthRepo {
     }
   }
 
-  Future<void> storeUserData({
-    required UserCredential userCredential,
-    required String email,
-    required String name,
-  }) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userCredential.user!.uid)
-        .set({
-          'uid': userCredential.user!.uid,
-          'name': name,
-          'email': email,
-          'createdAt': DateTime.now(),
-        });
-
-    print('=' * 50);
-    print(
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid),
-    );
-    print('=' * 50);
+  @override
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  @override
+  Future<UserCredential> signIn({required email, required password}) async {
+    return await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+}
 
-  Future<UserCredential?> signInWithGoogle() async {
+class GoogleAuth implements ISocialAuth {
+  final IUserStorage _iUserStorage;
+  final Token _token;
+  GoogleAuth(this._token, this._iUserStorage);
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  @override
+  Future<UserCredential?> signIn() async {
     final x = _googleSignIn.initialize(
       clientId:
           '641080345679-7lhqpd058ub38c7t5krfc232348an5o1.apps.googleusercontent.com',
@@ -259,7 +251,7 @@ class AuthRepo {
       final UserCredential userCredential = await FirebaseAuth.instance
           .signInWithCredential(credential);
       // saveToken(userCredential.user!.uid);
-      await storeUserData(
+      await _iUserStorage.storeUserData(
         email: googleUser.email,
         name: googleUser.displayName ?? "No name",
         userCredential: userCredential,
@@ -277,5 +269,61 @@ class AuthRepo {
       // return AuthError(message: e.toString());
       // emit(AuthError(message: e.toString()));
     }
+  }
+
+  @override
+  Future<void> signOut() async {
+    try {
+      await Future.wait([
+        FirebaseAuth.instance.signOut(),
+        GoogleSignIn.instance.disconnect(),
+        _token.deleteToken(),
+      ]);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+}
+
+abstract class IUserStorage {
+  Future<void> storeUserData({
+    required UserCredential userCredential,
+    required String email,
+    required String name,
+  });
+}
+
+class FirestoreUserStorage implements IUserStorage {
+  @override
+  Future<void> storeUserData({
+    required UserCredential userCredential,
+    required String email,
+    required String name,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userCredential.user!.uid)
+        .set({
+          'uid': userCredential.user!.uid,
+          'name': name,
+          'email': email,
+          'createdAt': DateTime.now(),
+        });
+
+    print('=' * 50);
+    print(
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid),
+    );
+    print('=' * 50);
+  }
+}
+
+class Token {
+  final storage = FlutterSecureStorage();
+
+  Future<void> deleteToken() async {
+    await storage.delete(key: 'token');
   }
 }

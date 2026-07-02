@@ -1,5 +1,5 @@
 
-import 'package:depi_dalil/features/artifacts_3d/presentation/widgets/stateItem.dart';
+import 'package:depi_dalil/features/ai_guide/presentation/widgets/stateItem.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:gap/gap.dart';
@@ -23,7 +23,12 @@ class BuildStateBar extends StatelessWidget {
           label: "liveBetween".tr(),
           gold: gold,
           value:
-              "${FormatYear.formatYear(eraInfo.startYear.toString() ?? '??')} - ${FormatYear.formatYear(eraInfo.endYear.toString() ?? '??')}",
+
+          FormatYear.formatRange(
+            eraInfo.startYear.toString(),
+            eraInfo.endYear.toString(),
+            context,
+          ),
         ),
         Gap((height / 20).clamp(40, 80)),
         Stateitem(label: "location".tr(), value: "EGYPT / BANHA", gold: gold),

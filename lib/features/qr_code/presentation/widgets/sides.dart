@@ -1,6 +1,5 @@
 import 'package:depi_dalil/features/qr_code/presentation/widgets/pharaonCorner.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../../../../core/constants/app_color.dart';
 
 class Sides extends StatelessWidget {

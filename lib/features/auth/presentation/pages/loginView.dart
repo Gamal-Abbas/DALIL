@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/constants/app_color.dart';
 import '../../../../core/utils/size.dart';
 import '../manager/authBloc.dart';
 import '../manager/authState.dart';
@@ -38,7 +36,7 @@ class _LoginviewState extends State<Loginview> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // ⭐ هنا بس
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Padding(
@@ -66,11 +64,12 @@ class _LoginviewState extends State<Loginview> {
               },
               builder: (context, state) {
                 print('Builder=============');
+                final isLoading = state is AuthLoading;
                 return Column(
                   spacing: (context.screenHeight / 32).clamp(24, 27),
                   children: [
                     const authLogo(),
-                    const welcomeSection(),
+                    const WelcomeSection(),
                     LoginForm(
                       onLogin: (v) async {
                         onLogin();
@@ -79,10 +78,13 @@ class _LoginviewState extends State<Loginview> {
                       formKey: _formKey,
                       passwordController: passwordController,
                     ),
-                    Loginbutton(onPressed: onLogin),
+                    Loginbutton(
+                      onPressed: onLogin,
+                      isLoading: isLoading,
+                    ),
                     Forggetpassword(email: emailController.text),
-                    const socialSignInSection(),
-                    const noAccountSection(),
+                    const SocialSignInSection(),
+                    const NoAccountSection(),
                   ],
                 );
               },

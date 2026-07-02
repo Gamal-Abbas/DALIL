@@ -1,13 +1,13 @@
-class qrState {}
+class QrState {}
 
-class qrInit extends qrState {}
+class QrInit extends QrState {}
 
-class qrSucces extends qrState {
+class QrSucces extends QrState {
   final Map<String, dynamic> data;
 
-  qrSucces({required this.data});
+  QrSucces({required this.data});
 }
 
-class qrError extends qrState {}
+class QrError extends QrState {}
 
-class qrLoading extends qrState {}
+class QrLoading extends QrState {}

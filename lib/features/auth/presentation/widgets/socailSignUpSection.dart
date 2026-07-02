@@ -8,8 +8,8 @@ import '../../../../customWidgets/customText.dart';
 import '../manager/authBloc.dart';
 import 'SignMethode.dart';
 
-class socialSignUpSection extends StatelessWidget {
-  const socialSignUpSection({super.key});
+class SocialSignUpSection extends StatelessWidget {
+  const SocialSignUpSection({super.key});
 
   @override
   Widget build(BuildContext context) {

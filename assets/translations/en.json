@@ -65,10 +65,40 @@
   "email": "Email",
   "memberSince": "Member Since",
   "editName": "Edit Name",
-  "save": "Save"
+  "save": "Save",
+  "Currency": "Currency",
+  "VISUAL MODE": "VISUAL MODE",
+
+  "USD": "USD",
+  "EUR": "EUR",
+  "GBP": "GBP",
+  "AED": "AED",
+  "SAR": "SAR",
+  "EGP": "EGP",
+
+  "ACCOUNT PREFERENCES": "ACCOUNT PREFERENCES",
+  "Personal Information": "Personal Information",
+  "Language": "Language",
+  "SECURITY & PRIVACY": "SECURITY & PRIVACY",
+  "Two-Factor Authentication": "Two-Factor Authentication",
+  "Change Encryption Keys": "Change Encryption Keys",
+  "Push Notifications": "Push Notifications",
+  "Enable critical artifact updates": "Enable critical artifact updates",
+  "Contact Support": "Contact Support",
+  "whatsapp_not_installed": "WhatsApp is not installed",
+  "Dark": "Dark",
+  "Light": "Light",
 
 
+  "change_password": "Change Password",
+  "current_password": "Current Password",
+  "new_password": "New Password",
+  "wrong_password": "Current password is incorrect",
+  "password_changed": "Password changed successfully",
+  "same_password": "New password must be different from current password",
 
+  "notifications": "Notifications",
+"qr": "qr"
 
 
 }

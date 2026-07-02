@@ -6,7 +6,7 @@ import '../../../../core/utils/size.dart';
 import '../../../../core/utils/validateHelper.dart';
 import '../../../../customWidgets/customTextformField.dart';
 
-class Signupform extends StatelessWidget {
+class SignUpForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController nameController;
   final TextEditingController emailController;
@@ -14,7 +14,7 @@ class Signupform extends StatelessWidget {
   final TextEditingController confirmPasswordController;
   final Function(String) onFieldSubmitted;
 
-  const Signupform({
+  const SignUpForm({
     super.key,
     required this.formKey,
     required this.nameController,
@@ -38,7 +38,7 @@ class Signupform extends StatelessWidget {
             textEditingController: nameController,
             textInputAction: TextInputAction.next,
             validator: (value) {
-              return ValidationHelper.validateName(context, value);
+              return ValidationHelper.validateName( value);
             },
           ),
 
@@ -49,7 +49,7 @@ class Signupform extends StatelessWidget {
             hint: 'User@gmail.com',
             textEditingController: emailController,
             validator: (value) {
-              return ValidationHelper.validateEmail(context, value);
+              return ValidationHelper.validateEmail(value);
             },
           ),
 
@@ -60,7 +60,7 @@ class Signupform extends StatelessWidget {
             textEditingController: passwordController,
             textInputAction: TextInputAction.next,
             validator: (value) {
-              return ValidationHelper.validatePassword(context, value);
+              return ValidationHelper.validatePassword( value);
             },
           ),
 
@@ -73,7 +73,7 @@ class Signupform extends StatelessWidget {
             textEditingController: confirmPasswordController,
             validator: (value) {
               return ValidationHelper.validateConfirmPassword(
-                context,
+
                 value,
                 passwordController.text,
               );

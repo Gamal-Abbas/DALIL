@@ -21,7 +21,6 @@ class EraModel extends BaseModel {
       image: json['image'] ?? '',
       description: json['description'] ?? '',
       collectionType: json['collectionType'] ?? 'eras',
-      // استخدم toInt() لضمان تحويل القيمة السالبة من Firestore بشكل صحيح
       startYear: json['startYear'] != null
           ? (json['startYear'] as num).toInt()
           : null,

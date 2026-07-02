@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../../../core/constants/cash.dart';
+import '../../data/datasources/firebase_service.dart';
 import '../../data/repositories/notiication_repo.dart';
-import '../../domain/usecases/firebase_service.dart';
-import '../../domain/usecases/notification_service.dart';
 
 class TestnotiView2 extends StatefulWidget {
   const TestnotiView2({super.key});
@@ -19,36 +18,12 @@ class TestnotiView2 extends StatefulWidget {
 }
 
 class _TestnotiView2State extends State<TestnotiView2> {
-  StreamSubscription<NotificationResponse>? subscription;
 
-  void onMessTap() {
-    subscription = NotificationRepo.streamController2.stream.listen((
-      event,
-    ) async {
-      if (!mounted) return;
-      if (event.payload == null) return;
 
-      print('RAW PAYLOAD RECEIVED: ${event.payload}');
 
-      await NotificationService.handleNavigation(context, event.payload!);
-    });
-  }
 
-  @override
-  void dispose() {
-    subscription?.cancel();
-    super.dispose();
-  }
 
-  @override
-  void initState() {
-    onMessTap();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      NotificationService.checkInitialNotification(context);
-    });
-    // TODO: implement initState
-    super.initState();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +36,11 @@ class _TestnotiView2State extends State<TestnotiView2> {
           children: [
             ListTile(
               title: Text('startDailyscheduled Notification',
-              style: context.textTheme.bodyLarge,
+                style: context.textTheme.bodyLarge,
               ),
               onTap: () async {
+                final enabled = cash.pref.getBool('notifications_enabled') ?? true;
+                if (!enabled) return;
                 await FirebaseService.retrieveRandom_Id_FromFirebase();
               },
               trailing: ElevatedButton.icon(
