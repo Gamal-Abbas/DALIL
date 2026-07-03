@@ -98,7 +98,8 @@
   "same_password": "New password must be different from current password",
 
   "notifications": "Notifications",
-"qr": "qr"
+  "qr": "qr",
+  "3D": "3D"
 
 
 }

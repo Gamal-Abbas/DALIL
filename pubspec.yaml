@@ -62,7 +62,7 @@ dependencies:
   workmanager: ^0.9.0+3
   easy_localization: ^3.0.8
   hydrated_bloc: ^11.0.0
-
+  model_viewer_plus: ^1.10.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -89,6 +89,15 @@ flutter:
   assets:
     - assets/logo/
     - assets/translations/
+    - assets/3d/cleopatra/scene_v1.glb
+    - assets/3d/karnak/scene_v1.glb
+    - assets/3d/khufu/scene_v1.glb
+    - assets/3d/masjid_elharam/scene_v1.glb
+    - assets/3d/mentuhotip_2/scene_v1.glb
+    - assets/3d/pyramid/scene_v1.glb
+    - assets/3d/ramsis_2/scene_v1.glb
+    - assets/3d/roman_temple/scene_v1.glb
+    - assets/3d/tomp_vally_of_king/scene_v1.glb
 
 
 

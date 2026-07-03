@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'core/theme/theme_extension.dart';
 import 'core/theme/text_theme.dart';
+import 'features/artifacts_3d/presentation/pages/3dView.dart';
 import 'features/notifications/data/datasources/notification_service.dart';
 import 'features/notifications/data/repositories/notiication_repo.dart';
 import 'features/profile/presentation/manager/currency_cubit.dart';
@@ -32,7 +33,7 @@ class _HomeState extends State<Home> {
     context.read<ProfileCubit>().getUser();
     context.read<CurrencyCubit>().loadCurrency();
 
-    // ✅ مرة واحدة بس
+
     if (!_initialNotificationChecked) {
       _initialNotificationChecked = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -57,6 +58,10 @@ class _HomeState extends State<Home> {
     switch (index) {
       case 0: return const ProfileView();
       case 1: return const QRScannerScreen();
+      case 2: return  Model3DScreen(
+        assetPath: 'assets/3d/ramsis_2/scene_v1.glb',
+        title: 'ramsis_2',
+      );
       default: return const ProfileView();
     }
   }
@@ -90,6 +95,7 @@ class _HomeState extends State<Home> {
             children: [
               _navItem(context, index: 0, icon: Icons.person_rounded, label: 'profile'.tr()),
               _navItem(context, index: 1, icon: Icons.qr_code_scanner_rounded, label: 'qr'.tr()),
+              _navItem(context, index: 2, icon: Icons.diamond, label: '3D'.tr()),
             ],
           ),
         ),
