@@ -43,3 +43,22 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# ===== SECRET FILES - لا ترفعهم أبدًا =====
+
+# Firebase
+# Firebase - الأهم
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+
+# Environment variables
+.env
+*.env
+.env.local
+.env.production
+
+# API Keys
+**/secrets.dart
+**/api_keys.dart
