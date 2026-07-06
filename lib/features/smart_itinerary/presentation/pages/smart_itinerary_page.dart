@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../cubit/smart_itinerary_cubit.dart';
-import '../cubit/smart_itinerary_state.dart';
-import '../../../../core/di/injection_container.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'smart_itinerary_result_page.dart';
 
 class SmartItineraryPage extends StatefulWidget {
   const SmartItineraryPage({super.key});
@@ -13,9 +11,9 @@ class SmartItineraryPage extends StatefulWidget {
 
 class _SmartItineraryPageState extends State<SmartItineraryPage> {
   String _selectedCity = 'cairo';
-  double _availableHours = 6.0;
+  double _availableHours = 4.5;
   double _budget = 1000.0;
-  final Set<String> _selectedInterests = {};
+  final Set<String> _selectedInterests = {'History', 'Museum'};
 
   final List<Map<String, String>> _cities = [
     {'id': 'cairo', 'name': 'Cairo'},
@@ -28,227 +26,342 @@ class _SmartItineraryPageState extends State<SmartItineraryPage> {
     'History', 'Museum', 'Photography', 'Nature', 'Shopping', 'Food', 'Family'
   ];
 
+  final Color _bgColor = const Color(0xFF121212);
+  final Color _cardColor = const Color(0xFF1E1E1E);
+  final Color _goldColor = const Color(0xFFF3C653);
+  final Color _chipBgUnselected = const Color(0xFF2C2C2C);
+  final Color _chipTextUnselected = const Color(0xFFAAAAAA);
+
+  void _navigateToResults() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SmartItineraryResultPage(
+          cityId: _selectedCity,
+          availableMinutes: (_availableHours * 60).toInt(),
+          budget: _budget.toInt(),
+          interests: _selectedInterests.toList(),
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0); // Slide from right
+          const end = Offset.zero;
+          const curve = Curves.easeInOutQuart;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<SmartItineraryCubit>(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Smart Itinerary Builder'),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: SingleChildScrollView(
-                child: _buildInputForm(),
-              ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              flex: 6,
-              child: _buildResults(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputForm() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          DropdownButtonFormField<String>(
-            initialValue: _selectedCity,
-            decoration: const InputDecoration(labelText: 'City', border: OutlineInputBorder()),
-            items: _cities.map((city) {
-              return DropdownMenuItem(
-                value: city['id'],
-                child: Text(city['name']!),
-              );
-            }).toList(),
-            onChanged: (val) {
-              if (val != null) setState(() => _selectedCity = val);
-            },
-          ),
-          const SizedBox(height: 16),
-          Text('Available Time: ${_availableHours.toInt()} hours', style: Theme.of(context).textTheme.titleMedium),
-          Slider(
-            value: _availableHours,
-            min: 2,
-            max: 12,
-            divisions: 10,
-            label: '${_availableHours.toInt()}h',
-            onChanged: (val) => setState(() => _availableHours = val),
-          ),
-          Text('Budget: ${_budget.toInt()} EGP', style: Theme.of(context).textTheme.titleMedium),
-          Slider(
-            value: _budget,
-            min: 100,
-            max: 3000,
-            divisions: 29,
-            label: '${_budget.toInt()} EGP',
-            onChanged: (val) => setState(() => _budget = val),
-          ),
-          const SizedBox(height: 16),
-          Text('Interests:', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: _interestsOptions.map((interest) {
-              final isSelected = _selectedInterests.contains(interest);
-              return FilterChip(
-                label: Text(interest),
-                selected: isSelected,
-                onSelected: (selected) {
-                  setState(() {
-                    if (selected) {
-                      _selectedInterests.add(interest);
-                    } else {
-                      _selectedInterests.remove(interest);
-                    }
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 24),
-          Builder(
-            builder: (context) {
-              return FilledButton.icon(
-                icon: const Icon(Icons.auto_awesome),
-                onPressed: () {
-                  context.read<SmartItineraryCubit>().generateItinerary(
-                    cityId: _selectedCity,
-                    availableMinutes: (_availableHours * 60).toInt(),
-                    budget: _budget.toInt(),
-                    interests: _selectedInterests.toList(),
-                  );
-                },
-                label: const Text('Generate Itinerary'),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResults() {
-    return BlocBuilder<SmartItineraryCubit, SmartItineraryState>(
-      builder: (context, state) {
-        if (state is SmartItineraryInitial) {
-          return const Center(
-            child: Text('Select options and generate an itinerary.', textAlign: TextAlign.center),
-          );
-        } else if (state is SmartItineraryLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is SmartItineraryError) {
-          return Center(
-            child: Text(
-              state.message, 
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-              textAlign: TextAlign.center,
-            )
-          );
-        } else if (state is SmartItineraryLoaded) {
-          final itinerary = state.itinerary;
-          
-          if (itinerary.places.isEmpty) {
-            return const Center(
-              child: Text('No places fit your time and budget.\nTry adjusting your criteria.', textAlign: TextAlign.center),
-            );
-          }
-
-          return Column(
+    return Scaffold(
+      backgroundColor: _bgColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: 24),
+              // Header Section
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 0,
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'CURATION ENGINE',
+                      style: GoogleFonts.inter(
+                        color: _goldColor.withValues(alpha: 0.8),
+                        fontSize: 12,
+                        letterSpacing: 2.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Smart Itinerary',
+                      style: GoogleFonts.outfit(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Define your parameters. Let the digital curator weave history into your journey through time and space.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: Colors.grey.shade400,
+                        fontSize: 15,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // City Dropdown Card (First)
+              _buildDarkCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Destination',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _chipBgUnselected,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedCity,
+                          dropdownColor: _cardColor,
+                          isExpanded: true,
+                          icon: Icon(Icons.arrow_drop_down, color: _goldColor),
+                          style: GoogleFonts.inter(color: Colors.white, fontSize: 16),
+                          items: _cities.map((city) {
+                            return DropdownMenuItem(
+                              value: city['id'],
+                              child: Text(city['name']!),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() => _selectedCity = val);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Time Available Card (Second)
+              _buildDarkCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildSummaryItem('Cost', '${itinerary.totalCost} EGP', Icons.attach_money),
-                        _buildSummaryItem('Duration', '${itinerary.totalDuration} min', Icons.timer),
-                        _buildSummaryItem('Avg Rating', itinerary.averageRating.toStringAsFixed(1), Icons.star),
+                        Text(
+                          'Time Available',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '${_availableHours.toStringAsFixed(1).replaceAll('.0', '')} Hours',
+                          style: GoogleFonts.inter(
+                            color: _goldColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
+                    ),
+                    const SizedBox(height: 24),
+                    SliderTheme(
+                      data: SliderThemeData(
+                        activeTrackColor: _goldColor,
+                        inactiveTrackColor: Colors.grey.shade800,
+                        thumbColor: _goldColor,
+                        trackHeight: 4.0,
+                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 20.0),
+                      ),
+                      child: Slider(
+                        value: _availableHours,
+                        min: 1,
+                        max: 12,
+                        divisions: 11,
+                        onChanged: (val) => setState(() => _availableHours = val),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildSliderLabel('1 HOUR'),
+                          _buildSliderLabel('6 HOURS'),
+                          _buildSliderLabel('12 HOURS'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Interests Card
+              _buildDarkCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Interests',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Wrap(
+                      spacing: 12.0,
+                      runSpacing: 12.0,
+                      children: _interestsOptions.map((interest) {
+                        final isSelected = _selectedInterests.contains(interest);
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (isSelected) {
+                                _selectedInterests.remove(interest);
+                              } else {
+                                _selectedInterests.add(interest);
+                              }
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isSelected ? _goldColor : _chipBgUnselected,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              interest,
+                              style: GoogleFonts.inter(
+                                color: isSelected ? Colors.black87 : _chipTextUnselected,
+                                fontSize: 14,
+                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Budget Card
+              _buildDarkCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Budget',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '${_budget.toInt()} EGP',
+                          style: GoogleFonts.inter(
+                            color: _goldColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    SliderTheme(
+                      data: SliderThemeData(
+                        activeTrackColor: _goldColor,
+                        inactiveTrackColor: Colors.grey.shade800,
+                        thumbColor: _goldColor,
+                        trackHeight: 4.0,
+                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                      ),
+                      child: Slider(
+                        value: _budget,
+                        min: 100,
+                        max: 3000,
+                        divisions: 29,
+                        onChanged: (val) => setState(() => _budget = val),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+              
+              // Generate Button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _goldColor,
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: _navigateToResults,
+                  child: Text(
+                    'Generate My Itinerary',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
                     ),
                   ),
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: itinerary.places.length,
-                  itemBuilder: (context, index) {
-                    final place = itinerary.places[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(place.name, style: Theme.of(context).textTheme.titleLarge),
-                            const SizedBox(height: 4),
-                            Text(place.description, style: Theme.of(context).textTheme.bodyMedium),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                Chip(
-                                  avatar: const Icon(Icons.star, size: 16),
-                                  label: Text(place.rating.toString()),
-                                  padding: EdgeInsets.zero,
-                                ),
-                                Chip(
-                                  avatar: const Icon(Icons.money, size: 16),
-                                  label: Text('${place.ticketPrice} EGP'),
-                                  padding: EdgeInsets.zero,
-                                ),
-                                Chip(
-                                  avatar: const Icon(Icons.schedule, size: 16),
-                                  label: Text('${place.visitDuration} min'),
-                                  padding: EdgeInsets.zero,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Categories: ${place.categories.join(", ")}', 
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic)
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              const SizedBox(height: 40),
             ],
-          );
-        }
-        return const SizedBox();
-      },
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildSummaryItem(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, size: 20),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
-      ],
+  Widget _buildDarkCard({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+      padding: const EdgeInsets.all(24.0),
+      decoration: BoxDecoration(
+        color: _cardColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildSliderLabel(String text) {
+    return Text(
+      text,
+      style: GoogleFonts.inter(
+        color: Colors.grey.shade600,
+        fontSize: 10,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 1.0,
+      ),
     );
   }
 }
