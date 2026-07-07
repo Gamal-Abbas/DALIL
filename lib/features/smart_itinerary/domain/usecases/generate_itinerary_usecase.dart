@@ -9,12 +9,16 @@ class GenerateItineraryParams {
   final int availableMinutes;
   final int budget;
   final List<String> interests;
+  final double? userLat;
+  final double? userLon;
 
   const GenerateItineraryParams({
     required this.cityId,
     required this.availableMinutes,
     required this.budget,
     required this.interests,
+    this.userLat,
+    this.userLon,
   });
 }
 
@@ -33,7 +37,7 @@ class GenerateItineraryUseCase {
     }
 
     // 2. Base Scoring (Value)
-    final scoredPlaces = _scorePlaces(allPlaces, params.interests);
+    final scoredPlaces = _scorePlaces(allPlaces, params);
 
     // 3. Dynamic Selection & Geographic Routing Algorithm (Knapsack + Nearest Neighbor)
     int remainingTime = params.availableMinutes;
@@ -42,6 +46,25 @@ class GenerateItineraryUseCase {
     
     List<_ScoredPlace> unvisited = List.from(scoredPlaces);
     PlaceEntity? currentPlace;
+    
+    // Conceptually proxy the user's location as the starting point if available
+    bool hasUserLocation = params.userLat != null && params.userLon != null;
+    double currentLat = params.userLat ?? 0.0;
+    double currentLon = params.userLon ?? 0.0;
+    
+    // Safety Check: If the user is > 100km away from the highest scored place in the city,
+    // they are likely planning remotely. Ignore their current location to avoid massive transit times.
+    if (hasUserLocation && unvisited.isNotEmpty) {
+      final anchorPlace = unvisited.first.place;
+      final distanceToCity = _calculateDistance(
+        currentLat, currentLon, 
+        anchorPlace.location.latitude, anchorPlace.location.longitude
+      );
+      if (distanceToCity > 100.0) {
+        hasUserLocation = false;
+        debugPrint("User is $distanceToCity km away. Ignoring local start point.");
+      }
+    }
 
     while (unvisited.isNotEmpty && remainingTime > 0 && remainingBudget > 0) {
       _ScoredPlace? bestNextPlace;
@@ -53,11 +76,14 @@ class GenerateItineraryUseCase {
         int transitTime = 0;
         double distanceKm = 0.0;
 
-        // Calculate transit time from the current location (if not the first place)
-        if (currentPlace != null) {
+        // Calculate transit time from the current location (or user location for the very first stop)
+        if (currentPlace != null || hasUserLocation) {
+          double startLat = currentPlace?.location.latitude ?? currentLat;
+          double startLon = currentPlace?.location.longitude ?? currentLon;
+          
           distanceKm = _calculateDistance(
-            currentPlace.location.latitude,
-            currentPlace.location.longitude,
+            startLat,
+            startLon,
             place.location.latitude,
             place.location.longitude,
           );
@@ -68,20 +94,23 @@ class GenerateItineraryUseCase {
         // Check if the place fits within remaining time and budget constraints
         if (place.ticketPrice <= remainingBudget && (place.visitDuration + transitTime) <= remainingTime) {
           
-          // Knapsack Density Score: (Value / Cost)
-          // We combine time cost and monetary cost into a single 'cost factor'.
-          // Let's assume 1 EGP is conceptually equivalent to 0.5 minutes for weighting purposes.
-          double costFactor = (place.visitDuration + transitTime) + (place.ticketPrice * 0.5);
+          // To balance the Knapsack properly for TIME, we use a Time Density approach.
+          // This prevents a single 3-hour place from hogging all the time if two 1-hour places 
+          // give a better combined experience. We divide the base score by the time it consumes.
+          // We DO NOT penalize for ticket price, as long as it fits the budget limit.
+          double totalTimeForPlace = (place.visitDuration + transitTime).toDouble();
           
-          double densityScore = (candidate.score * 100.0) / (costFactor > 0 ? costFactor : 1.0);
+          // Multiply by 100 to keep numbers readable
+          double timeDensityScore = (candidate.score * 100.0) / (totalTimeForPlace > 0 ? totalTimeForPlace : 1.0);
           
-          // Geographic Penalty: Strongly penalize far away places to create a logical route
-          if (currentPlace != null) {
-            densityScore -= (distanceKm * 5.0); 
+          double dynamicScore = timeDensityScore;
+          
+          if (currentPlace != null || hasUserLocation) {
+            dynamicScore -= (distanceKm * 2.0); // Geographic penalty to keep places clustered
           }
 
-          if (densityScore > bestDynamicScore) {
-            bestDynamicScore = densityScore;
+          if (dynamicScore > bestDynamicScore) {
+            bestDynamicScore = dynamicScore;
             bestNextPlace = candidate;
             bestNextTransitTime = transitTime;
           }
@@ -128,14 +157,14 @@ class GenerateItineraryUseCase {
   /// Calculates Base Value/Score for each place
   List<_ScoredPlace> _scorePlaces(
     List<PlaceEntity> places,
-    List<String> userInterests,
+    GenerateItineraryParams params,
   ) {
     return places.map((place) {
       double score = 10.0; // Base minimal score
 
       // Rule 1: Interest Matching (Very High Weight)
       for (final category in place.categories) {
-        if (userInterests.contains(category)) {
+        if (params.interests.contains(category)) {
           score += 50.0;
         }
       }
@@ -145,6 +174,16 @@ class GenerateItineraryUseCase {
 
       // Rule 3: Rating (Medium Weight)
       score += place.rating * 15.0;
+
+      // Rule 4: Budget Persona Match (The 'Luxury' Rule)
+      // If the user has a high budget, they are looking for premium experiences.
+      if (params.budget >= 1000) {
+        // Boost expensive places. A 400 EGP ticket gives +40 points.
+        score += (place.ticketPrice / 10.0); 
+      } else if (params.budget <= 500) {
+        // If budget is tight, lightly penalize expensive places to leave room for more activities.
+        score -= (place.ticketPrice / 20.0);
+      }
 
       // Note: Time and Cost penalties are removed from here because they are 
       // dynamically handled in the density calculation during the selection phase.

@@ -14,6 +14,8 @@ class SmartItineraryCubit extends Cubit<SmartItineraryState> {
     required int availableMinutes,
     required int budget,
     required List<String> interests,
+    double? userLat,
+    double? userLon,
   }) async {
     debugPrint("Cubit emitting SmartItineraryLoading");
     emit(SmartItineraryLoading());
@@ -24,6 +26,8 @@ class SmartItineraryCubit extends Cubit<SmartItineraryState> {
         availableMinutes: availableMinutes,
         budget: budget,
         interests: interests,
+        userLat: userLat,
+        userLon: userLon,
       );
 
       final itinerary = await generateItineraryUseCase(params);

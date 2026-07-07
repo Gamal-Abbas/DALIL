@@ -1,1 +1,3 @@
-// TODO: Implement object detection repository interface
+abstract class ObjectDetectionRepository {
+  Future<void> detectObject();
+}

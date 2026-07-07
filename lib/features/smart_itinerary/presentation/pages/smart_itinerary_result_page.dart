@@ -11,6 +11,8 @@ class SmartItineraryResultPage extends StatefulWidget {
   final int availableMinutes;
   final int budget;
   final List<String> interests;
+  final double? userLat;
+  final double? userLon;
 
   const SmartItineraryResultPage({
     super.key,
@@ -18,6 +20,8 @@ class SmartItineraryResultPage extends StatefulWidget {
     required this.availableMinutes,
     required this.budget,
     required this.interests,
+    this.userLat,
+    this.userLon,
   });
 
   @override
@@ -40,6 +44,8 @@ class _SmartItineraryResultPageState extends State<SmartItineraryResultPage> {
       availableMinutes: widget.availableMinutes,
       budget: widget.budget,
       interests: widget.interests,
+      userLat: widget.userLat,
+      userLon: widget.userLon,
     );
   }
 
@@ -59,17 +65,8 @@ class _SmartItineraryResultPageState extends State<SmartItineraryResultPage> {
           backgroundColor: _bgColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back_ios_new, color: _goldColor),
             onPressed: () => Navigator.pop(context),
-          ),
-          centerTitle: true,
-          title: Text(
-            'DALIL',
-            style: GoogleFonts.outfit(
-              color: _goldColor,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 4.0,
-            ),
           ),
         ),
         body: BlocBuilder<SmartItineraryCubit, SmartItineraryState>(

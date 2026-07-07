@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:geolocator/geolocator.dart';
 import 'smart_itinerary_result_page.dart';
 
 class SmartItineraryPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class SmartItineraryPage extends StatefulWidget {
 class _SmartItineraryPageState extends State<SmartItineraryPage> {
   String _selectedCity = 'cairo';
   double _availableHours = 4.5;
-  double _budget = 1000.0;
+  double _budget = 500.0;
   final Set<String> _selectedInterests = {'History', 'Museum'};
 
   final List<Map<String, String>> _cities = [
@@ -32,7 +33,38 @@ class _SmartItineraryPageState extends State<SmartItineraryPage> {
   final Color _chipBgUnselected = const Color(0xFF2C2C2C);
   final Color _chipTextUnselected = const Color(0xFFAAAAAA);
 
-  void _navigateToResults() {
+  bool _isLoadingLocation = false;
+
+  Future<void> _navigateToResults() async {
+    if (_isLoadingLocation) return;
+    setState(() => _isLoadingLocation = true);
+
+    double? userLat;
+    double? userLon;
+
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+        Position position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 5),
+          ),
+        );
+        userLat = position.latitude;
+        userLon = position.longitude;
+      }
+    } catch (e) {
+      debugPrint("Failed to get location: \$e");
+    }
+
+    if (!mounted) return;
+    setState(() => _isLoadingLocation = false);
+
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -41,6 +73,8 @@ class _SmartItineraryPageState extends State<SmartItineraryPage> {
           availableMinutes: (_availableHours * 60).toInt(),
           budget: _budget.toInt(),
           interests: _selectedInterests.toList(),
+          userLat: userLat,
+          userLon: userLon,
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0); // Slide from right
@@ -298,8 +332,8 @@ class _SmartItineraryPageState extends State<SmartItineraryPage> {
                       child: Slider(
                         value: _budget,
                         min: 100,
-                        max: 3000,
-                        divisions: 29,
+                        max: 1500,
+                        divisions: 14,
                         onChanged: (val) => setState(() => _budget = val),
                       ),
                     ),
@@ -323,14 +357,20 @@ class _SmartItineraryPageState extends State<SmartItineraryPage> {
                     elevation: 0,
                   ),
                   onPressed: _navigateToResults,
-                  child: Text(
-                    'Generate My Itinerary',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
+                  child: _isLoadingLocation
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(color: Colors.black87, strokeWidth: 2),
+                        )
+                      : Text(
+                          'Generate My Itinerary',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 40),

@@ -51,5 +51,9 @@
 	<string>DALIL needs access to your camera to scan hieroglyphs in real-time.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>DALIL needs access to your microphone for video recording.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>DALIL needs access to your location to optimize your itinerary starting from where you are.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>DALIL needs access to your location to optimize your itinerary starting from where you are.</string>
 </dict>
 </plist>

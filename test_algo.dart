@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 void main() {
   List<PlaceEntity> allPlaces = [
@@ -41,6 +40,7 @@ void main() {
       remainingTime -= place.visitDuration;
     }
   }
+  // ignore: avoid_print
   print("Selected places count: \${selectedPlaces.length}");
 }
 

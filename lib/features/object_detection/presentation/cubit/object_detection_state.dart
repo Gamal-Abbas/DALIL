@@ -1,1 +1,5 @@
-// TODO: Implement object detection states
+abstract class ObjectDetectionState {
+  const ObjectDetectionState();
+}
+
+class ObjectDetectionInitial extends ObjectDetectionState {}
