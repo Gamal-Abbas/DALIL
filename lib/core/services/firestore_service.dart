@@ -11,4 +11,21 @@ class FirestoreService {
           .toList();
     });
   }
+
+  // 🔥 الجديد (للسيرش)
+  Future<List<PlaceModel>> getAllPlaces() async {
+    final collections = ["attractions", "kings", "eras"];
+
+    List<PlaceModel> all = [];
+
+    for (var col in collections) {
+      final snapshot = await _db.collection(col).get();
+
+      all.addAll(
+        snapshot.docs.map((doc) => PlaceModel.fromFirestore(doc)),
+      );
+    }
+
+    return all;
+  }
 }

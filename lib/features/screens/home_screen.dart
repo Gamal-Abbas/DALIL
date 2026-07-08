@@ -1,17 +1,58 @@
-import 'package:dalil/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:dalil/generated/l10n.dart';
 import 'package:dalil/core/services/firestore_service.dart';
-import 'package:dalil/core/models/place_model.dart';
-import '../../core/widget/place_card.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../../core/widget/home_header.dart';
+import '../../core/widget/home_search_field.dart';
+import '../../core/widget/home_section.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final FirestoreService service = FirestoreService();
+  final TextEditingController _searchController = TextEditingController();
+
+  bool _isSearching = false;
+  String _searchQuery = "";
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+        _searchQuery = "";
+      }
+    });
+  }
+
+  void _submitSearch(String value) {
+    setState(() => _searchQuery = value.trim());
+  }
+
+  Future<void> _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    setState(() {
+      _searchQuery = "";
+      _searchController.clear();
+      _isSearching = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = S.of(context);
     final lang = Localizations.localeOf(context).languageCode;
-    final service = FirestoreService();
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -20,27 +61,39 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         title: Text(
           loc.dalil,
-          style: const TextStyle(
-            color: Color(0xFFE5C158),
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Color(0xFFE5C158), fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: _toggleSearch,
+          ),
+        ],
+        bottom: _isSearching
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: HomeSearchField(
+                  controller: _searchController,
+                  hintText: loc.seeMore,
+                  onSubmitted: _submitSearch,
+                ),
+              )
+            : null,
       ),
       body: Stack(
         children: [
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/pyram.png'),
-                fit: BoxFit.cover,
-              ),
+              image: DecorationImage(image: AssetImage('assets/pyram.png'), fit: BoxFit.cover),
             ),
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
+                    // ignore: deprecated_member_use
                     Colors.black.withOpacity(0.6),
+                    // ignore: deprecated_member_use
                     Colors.black.withOpacity(0.9),
                   ],
                   begin: Alignment.topCenter,
@@ -49,189 +102,43 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-
           SafeArea(
             child: RefreshIndicator(
               color: const Color(0xFFE5C158),
-              onRefresh: () async {
-                await Future.delayed(const Duration(milliseconds: 800));
-              },
+              onRefresh: _onRefresh,
               child: ListView(
                 children: [
                   SizedBox(height: width * 0.05),
-                  _buildHeader(context),
+                  if (_searchQuery.isEmpty) const HomeHeader(),
 
-                  _buildSection(
-                    context: context,
+                  HomeSection(
                     title: loc.attractions,
                     icon: Icons.account_balance,
                     collection: "attractions",
                     stream: service.getPlaces("attractions"),
                     lang: lang,
+                    searchQuery: _searchQuery,
                   ),
 
-                  _buildSection(
-                    context: context,
+                  HomeSection(
                     title: loc.kings,
                     icon: Icons.workspace_premium,
                     collection: "kings",
                     stream: service.getPlaces("kings"),
                     lang: lang,
+                    searchQuery: _searchQuery,
                   ),
 
-                  _buildSection(
-                    context: context,
+                  HomeSection(
                     title: loc.eras,
                     icon: Icons.history,
                     collection: "eras",
                     stream: service.getPlaces("eras"),
                     lang: lang,
+                    searchQuery: _searchQuery,
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final loc = S.of(context);
-    final width = MediaQuery.of(context).size.width;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-      child: Column(
-        children: [
-          Text(
-            loc.welcome,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: width * 0.04,
-            ),
-          ),
-          SizedBox(height: width * 0.02),
-          Text(
-            loc.historyAwaits,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: const Color(0xFFE5C158),
-              fontSize: width * 0.07,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: width * 0.03),
-          Text(
-            loc.homeDesc,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white54,
-              fontSize: width * 0.035,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required BuildContext context,
-    required String title,
-    required IconData icon,
-    required String collection,
-    required Stream<List<PlaceModel>> stream,
-    required String lang,
-  }) {
-    final width = MediaQuery.of(context).size.width;
-    final loc = S.of(context);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: width * 0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-            child: Row(
-              children: [
-                Icon(icon, color: const Color(0xFFE5C158)),
-                SizedBox(width: width * 0.02),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: const Color(0xFFE5C158),
-                      fontSize: width * 0.05,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      loc.seeMore,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: width * 0.035,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                      color: Colors.white70,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-
-          SizedBox(height: width * 0.04),
-
-          SizedBox(
-            height: width * 0.6,
-            child: StreamBuilder<List<PlaceModel>>(
-              stream: stream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.wifi_off, color: Colors.white70),
-                      SizedBox(height: 10),
-                      Text(
-                        "No Internet or weak connection",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
-                  );
-                }
-
-                final data = snapshot.data ?? [];
-
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    final item = data[index];
-
-                    return PlaceCard(
-                      title: item.getName(lang),
-                      subtitle: item.getDescription(lang),
-                      image: item.image,
-                      onTap: () {},
-                    );
-                  },
-                );
-              },
             ),
           ),
         ],
