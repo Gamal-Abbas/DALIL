@@ -1,12 +1,13 @@
+import 'package:dalil/features/ai_guide/presentation/pages/ai_guide_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'core/di/injection_container.dart' as di;
-
-import 'features/smart_itinerary/presentation/pages/smart_itinerary_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -27,7 +28,7 @@ class DalilApp extends StatelessWidget {
         colorSchemeSeed: const Color(0xFFD4AF37),
         useMaterial3: true,
       ),
-      home: const SmartItineraryPage(),
+      home: const AiGuidePage(),
     );
   }
 }
