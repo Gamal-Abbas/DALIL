@@ -1,0 +1,770 @@
+[
+  {
+    "id": "100",
+    "english": "Hundred",
+    "pronunciation": "Hetep",
+    "meaning": "Hundred",
+    "arabic": "مئة",
+    "description": "The hieroglyphic symbol representing the number one hundred, used in ancient Egyptian numerology for counting large quantities."
+  },
+  {
+    "id": "Among",
+    "english": "Among",
+    "pronunciation": "Nty",
+    "meaning": "Among",
+    "arabic": "بين",
+    "description": "A determinative sign meaning 'among' or 'within', indicating the concept of being inside or surrounded by something."
+  },
+  {
+    "id": "Angry",
+    "english": "Angry",
+    "pronunciation": "Dsr",
+    "meaning": "Anger",
+    "arabic": "غاضب",
+    "description": "Depicts an angry facial expression, used as an ideogram to convey wrath or fury in ancient Egyptian texts."
+  },
+  {
+    "id": "Ankh",
+    "english": "Ankh",
+    "pronunciation": "Ankh",
+    "meaning": "Life",
+    "arabic": "عنخ",
+    "description": "One of the most iconic Egyptian symbols representing life and eternal existence. Frequently held by gods and pharaohs in temple reliefs."
+  },
+  {
+    "id": "Aroura",
+    "english": "Aroura",
+    "pronunciation": "Aroura",
+    "meaning": "Land unit",
+    "arabic": "ارورة",
+    "description": "A unit of land measurement equivalent to approximately 2,735 square meters, used in ancient Egyptian agricultural records."
+  },
+  {
+    "id": "At",
+    "english": "At",
+    "pronunciation": "At",
+    "meaning": "At",
+    "arabic": "عند",
+    "description": "A preposition meaning 'at' or 'near', used to indicate proximity or a specific point in ancient Egyptian grammar."
+  },
+  {
+    "id": "Bad_Thinking",
+    "english": "Bad Thinking",
+    "pronunciation": "Bia",
+    "meaning": "Evil thought",
+    "arabic": "تفكير سيئ",
+    "description": "A determinative representing negative thoughts or evil intentions, often associated with chaos and the god Set."
+  },
+  {
+    "id": "Bandage",
+    "english": "Bandage",
+    "pronunciation": "Mktt",
+    "meaning": "Bandage",
+    "arabic": "ضمادة",
+    "description": "Represents linen bandages used in mummification rituals. Also associated with medical practices in ancient Egypt."
+  },
+  {
+    "id": "Bee",
+    "english": "Bee",
+    "pronunciation": "Bit",
+    "meaning": "Bee",
+    "arabic": "نحلة",
+    "description": "Symbol of the honeybee, representing the Lower Kingdom. Part of the royal title 'He of the Sedge and Bee'."
+  },
+  {
+    "id": "Belongs",
+    "english": "Belongs",
+    "pronunciation": "Hn",
+    "meaning": "Belongs to",
+    "arabic": "ينتمي",
+    "description": "A determinative indicating possession or belonging, used to mark words related to ownership and property."
+  },
+  {
+    "id": "Birth",
+    "english": "Birth",
+    "pronunciation": "Ms",
+    "meaning": "Birth",
+    "arabic": "ولادة",
+    "description": "Depicts the act of birth, showing a figure emerging from a body. Used in texts relating to creation and nativity."
+  },
+  {
+    "id": "Board_Game",
+    "english": "Board Game",
+    "pronunciation": "Sn.t",
+    "meaning": "Senet game",
+    "arabic": "لعبة لوحية",
+    "description": "Represents the ancient Egyptian board game Senet, symbolizing leisure, strategy, and the journey through the afterlife."
+  },
+  {
+    "id": "Book",
+    "english": "Book",
+    "pronunciation": "Md.w",
+    "meaning": "Book",
+    "arabic": "كتاب",
+    "description": "Symbol of knowledge and record-keeping, representing the sacred texts and scrolls used by scribes in ancient Egypt."
+  },
+  {
+    "id": "Boy",
+    "english": "Boy",
+    "pronunciation": "Hn.t",
+    "meaning": "Boy",
+    "arabic": "صبي",
+    "description": "Depicts a young male figure, used in texts referring to children, youth, and the concept of infancy."
+  },
+  {
+    "id": "Branch",
+    "english": "Branch",
+    "pronunciation": "Sns",
+    "meaning": "Branch",
+    "arabic": "غصن",
+    "description": "Represents a tree branch, used in contexts relating to vegetation, agriculture, and the natural world."
+  },
+  {
+    "id": "Bread",
+    "english": "Bread",
+    "pronunciation": "T",
+    "meaning": "Bread",
+    "arabic": "خبز",
+    "description": "Depicts a round loaf of bread, one of the most common offerings to the dead and a staple food in ancient Egypt."
+  },
+  {
+    "id": "Brewer",
+    "english": "Brewer",
+    "pronunciation": "Bq.t",
+    "meaning": "Brewing",
+    "arabic": "جراح",
+    "description": "Represents a person brewing beer, reflecting the importance of beer production in ancient Egyptian daily life and temple offerings."
+  },
+  {
+    "id": "Builder",
+    "english": "Builder",
+    "pronunciation": "Khas",
+    "meaning": "Builder",
+    "arabic": "بناة",
+    "description": "Depicts a person engaged in construction work, associated with the building of temples, pyramids, and monuments."
+  },
+  {
+    "id": "Bury",
+    "english": "Bury",
+    "pronunciation": "Kheper",
+    "meaning": "To bury",
+    "arabic": "دفن",
+    "description": "A determinative meaning 'to bury', used in funerary texts and inscriptions related to burial practices."
+  },
+  {
+    "id": "Canal",
+    "english": "Canal",
+    "pronunciation": "Ha.t",
+    "meaning": "Canal",
+    "arabic": "قناة",
+    "description": "Represents an irrigation canal, essential to the agricultural system along the Nile River."
+  },
+  {
+    "id": "Cloth_on_Pole",
+    "english": "Cloth on Pole",
+    "pronunciation": "Wes",
+    "meaning": "Cloth display",
+    "arabic": "قماش على عمود",
+    "description": "Depicts a piece of cloth suspended from a pole, possibly used as a marker or signal in ancient Egyptian contexts."
+  },
+  {
+    "id": "Cobra",
+    "english": "Cobra",
+    "pronunciation": "Djat",
+    "meaning": "Cobra",
+    "arabic": "كوبرا",
+    "description": "The rearing cobra (uraeus), a symbol of divine authority and royal power, worn on the pharaoh's crown."
+  },
+  {
+    "id": "Composite_Bow",
+    "english": "Composite Bow",
+    "pronunciation": "Pd",
+    "meaning": "Bow",
+    "arabic": "قوس مركب",
+    "description": "Represents the advanced composite bow used in ancient Egyptian warfare, symbolizing military strength."
+  },
+  {
+    "id": "Cooked",
+    "english": "Cooked",
+    "pronunciation": "Aa.t",
+    "meaning": "Cooked food",
+    "arabic": "مطبوخ",
+    "description": "A determinative indicating cooked food, used to classify prepared meals in ancient Egyptian texts."
+  },
+  {
+    "id": "Corpse",
+    "english": "Corpse",
+    "pronunciation": "D",
+    "meaning": "Corpse",
+    "arabic": "جثة",
+    "description": "Depicts a deceased person, used in funerary literature and texts relating to death and the afterlife."
+  },
+  {
+    "id": "Dessert",
+    "english": "Desert",
+    "pronunciation": "Dshrt",
+    "meaning": "Desert",
+    "arabic": "صحراء",
+    "description": "Represents the barren desert landscape beyond the Nile floodplain, associated with chaos and foreign lands."
+  },
+  {
+    "id": "Divide",
+    "english": "Divide",
+    "pronunciation": "Pd",
+    "meaning": "To divide",
+    "arabic": "تقسيم",
+    "description": "A determinative meaning 'to divide' or 'separate', used in mathematical and administrative contexts."
+  },
+  {
+    "id": "Duck",
+    "english": "Duck",
+    "pronunciation": "Srr",
+    "meaning": "Duck",
+    "arabic": "بطة",
+    "description": "Depicts a duck, commonly used as a determinative for young birds and as an offering animal in temple rituals."
+  },
+  {
+    "id": "Elephant",
+    "english": "Elephant",
+    "pronunciation": "Ab",
+    "meaning": "Elephant",
+    "arabic": "فيل",
+    "description": "Represents the elephant, symbolizing strength and power. Associated with the god associated with chaos in some periods."
+  },
+  {
+    "id": "Enclosed_Mound",
+    "english": "Enclosed Mound",
+    "pronunciation": "Niwt",
+    "meaning": "Town",
+    "arabic": "تل مغلق",
+    "description": "A determinative representing an enclosed piece of land or a town, used in place names and geographical texts."
+  },
+  {
+    "id": "Eye",
+    "english": "Eye",
+    "pronunciation": "Ir.t",
+    "meaning": "Eye",
+    "arabic": "عين",
+    "description": "The Eye of Horus (Wadjet), a powerful protective symbol representing healing, restoration, and good health."
+  },
+  {
+    "id": "Fabric",
+    "english": "Fabric",
+    "pronunciation": "Snny",
+    "meaning": "Linen",
+    "arabic": "قماش",
+    "description": "Represents woven linen fabric, reflecting the importance of textile production in ancient Egyptian economy."
+  },
+  {
+    "id": "Face",
+    "english": "Face",
+    "pronunciation": "Hr",
+    "meaning": "Face",
+    "arabic": "وجه",
+    "description": "Depicts a human face, used as a determinative for facial features and expressions in ancient Egyptian writing."
+  },
+  {
+    "id": "Falcon",
+    "english": "Falcon",
+    "pronunciation": "Hr",
+    "meaning": "Falcon",
+    "arabic": "صقر",
+    "description": "The falcon represents the god Horus and royal power. A central symbol in Egyptian mythology and kingship."
+  },
+  {
+    "id": "Fingre",
+    "english": "Finger",
+    "pronunciation": "Dsr",
+    "meaning": "Finger",
+    "arabic": "إصبع",
+    "description": "Depicts a finger, used in counting and as a determinative for body parts and gestures."
+  },
+  {
+    "id": "Fish",
+    "english": "Fish",
+    "pronunciation": "Int",
+    "meaning": "Fish",
+    "arabic": "سمكة",
+    "description": "Represents various species of Nile fish, used in offerings and as a determinative for aquatic life."
+  },
+  {
+    "id": "Flail",
+    "english": "Flail",
+    "pronunciation": "Nkhkh",
+    "meaning": "Flail",
+    "arabic": "عصا",
+    "description": "The royal flail (nekhekh), a symbol of pharaonic authority paired with the crook in royal regalia."
+  },
+  {
+    "id": "Folded_Cloth",
+    "english": "Folded Cloth",
+    "pronunciation": "Sn",
+    "meaning": "Folded linen",
+    "arabic": "قماش مطوي",
+    "description": "Represents a neatly folded piece of linen, associated with purity, preparation, and ritual offerings."
+  },
+  {
+    "id": "Foot",
+    "english": "Foot",
+    "pronunciation": "Abd",
+    "meaning": "Foot",
+    "arabic": "قدم",
+    "description": "Depicts a human foot, used as a determinative for walking, standing, and locomotion-related words."
+  },
+  {
+    "id": "Galena",
+    "english": "Galena",
+    "pronunciation": "Mkmt",
+    "meaning": "Kohl",
+    "arabic": "جالين",
+    "description": "A mineral used in ancient Egyptian cosmetics and medicine, particularly as kohl for eye decoration."
+  },
+  {
+    "id": "Giraffe",
+    "english": "Giraffe",
+    "pronunciation": "Srf",
+    "meaning": "Giraffe",
+    "arabic": "زرافة",
+    "description": "Represents the giraffe, symbolizing watchfulness and the concept of 'to oversee' due to its height."
+  },
+  {
+    "id": "He",
+    "english": "He",
+    "pronunciation": "F",
+    "meaning": "He",
+    "arabic": "هو",
+    "description": "A third-person masculine pronoun meaning 'he' or 'him', one of the basic grammatical elements in ancient Egyptian."
+  },
+  {
+    "id": "Head",
+    "english": "Head",
+    "pronunciation": "Tp",
+    "meaning": "Head",
+    "arabic": "رأس",
+    "description": "Depicts a human head, used as a determinative for head-related words and concepts of thought and leadership."
+  },
+  {
+    "id": "Her",
+    "english": "Her",
+    "pronunciation": "St",
+    "meaning": "Her",
+    "arabic": "لها",
+    "description": "A third-person feminine pronoun meaning 'her' or 'hers', used in ancient Egyptian grammatical constructions."
+  },
+  {
+    "id": "Hit",
+    "english": "Hit",
+    "pronunciation": "Hn",
+    "meaning": "To strike",
+    "arabic": "ضرب",
+    "description": "A determinative meaning 'to strike' or 'to hit', depicting the act of physical impact."
+  },
+  {
+    "id": "Horn",
+    "english": "Horn",
+    "pronunciation": "Wsrr",
+    "meaning": "Horn",
+    "arabic": "قرن",
+    "description": "Represents an animal horn, used as a determinative for horned animals and related concepts."
+  },
+  {
+    "id": "King",
+    "english": "King",
+    "pronunciation": "Nesu",
+    "meaning": "King",
+    "arabic": "ملك",
+    "description": "The title of pharaoh, representing divine kingship and the ruler's role as intermediary between gods and humanity."
+  },
+  {
+    "id": "Leg",
+    "english": "Leg",
+    "pronunciation": "Smsw",
+    "meaning": "Leg",
+    "arabic": "ساق",
+    "description": "Depicts a human leg, used as a determinative for movement, walking, and leg-related actions."
+  },
+  {
+    "id": "Length_Of_a_Human_Arm",
+    "english": "Length of a Human Arm",
+    "pronunciation": "Meh",
+    "meaning": "Arm length",
+    "arabic": "طول الذراع",
+    "description": "A unit of measurement based on the length of a human arm (approximately 52.5 cm), used in construction."
+  },
+  {
+    "id": "Life_Spirit",
+    "english": "Life Spirit",
+    "pronunciation": "Ka",
+    "meaning": "Life force",
+    "arabic": "روح الحياة",
+    "description": "Represents the concept of vital force or life spirit (ka), one of the essential components of the Egyptian soul."
+  },
+  {
+    "id": "Limit",
+    "english": "Limit",
+    "pronunciation": "Hq",
+    "meaning": "Boundary",
+    "arabic": "حد",
+    "description": "A determinative meaning 'boundary' or 'limit', used in legal and geographical contexts to define borders."
+  },
+  {
+    "id": "Lion",
+    "english": "Lion",
+    "pronunciation": "Lmy",
+    "meaning": "Lion",
+    "arabic": "أسد",
+    "description": "The lion symbolizes power, ferocity, and courage. Associated with the sun and royal military prowess."
+  },
+  {
+    "id": "Lizard",
+    "english": "Lizard",
+    "pronunciation": "Snd",
+    "meaning": "Lizard",
+    "arabic": "سحلية",
+    "description": "Represents a lizard, used in texts relating to small creatures and as a determinative for reptiles."
+  },
+  {
+    "id": "Loaf",
+    "english": "Loaf",
+    "pronunciation": "Xn",
+    "meaning": "Loaf",
+    "arabic": "رغيف",
+    "description": "Represents a loaf of bread, used as a phonetic complement and as an offering symbol in religious texts."
+  },
+  {
+    "id": "Loaf_Of_Bread",
+    "english": "Loaf of Bread",
+    "pronunciation": "Tp",
+    "meaning": "Bread offering",
+    "arabic": "رغيف خبز",
+    "description": "A specific form of bread offering, frequently depicted on offering tables in tombs and temples."
+  },
+  {
+    "id": "Man",
+    "english": "Man",
+    "pronunciation": "S",
+    "meaning": "Man",
+    "arabic": "رجل",
+    "description": "Depicts a seated man, used as a determinative for male persons, professions, and masculine nouns."
+  },
+  {
+    "id": "Mascot",
+    "english": "Mascot",
+    "pronunciation": "Sau",
+    "meaning": "Talisman",
+    "arabic": "تميمة",
+    "description": "Represents a protective talisman or mascot figure, used in amulets and protective magic."
+  },
+  {
+    "id": "Meet",
+    "english": "Meet",
+    "pronunciation": "Sm",
+    "meaning": "To meet",
+    "arabic": "لقاء",
+    "description": "A determinative meaning 'to meet' or 'to encounter', depicting two figures coming together."
+  },
+  {
+    "id": "Mother",
+    "english": "Mother",
+    "pronunciation": "Mwt",
+    "meaning": "Mother",
+    "arabic": "أم",
+    "description": "Depicts a mother figure, used in texts relating to motherhood, family, and the divine mother goddess."
+  },
+  {
+    "id": "Mouth",
+    "english": "Mouth",
+    "pronunciation": "R",
+    "meaning": "Mouth",
+    "arabic": "فم",
+    "description": "Depicts a human mouth, used as a determinative for speech-related words and as a phonetic sign."
+  },
+  {
+    "id": "Musical_Instrument",
+    "english": "Musical Instrument",
+    "pronunciation": "Hn",
+    "meaning": "Harp",
+    "arabic": "آلة موسيقية",
+    "description": "Represents a harp or other musical instrument, symbolizing celebration, religious ceremonies, and entertainment."
+  },
+  {
+    "id": "Nile_Fish",
+    "english": "Nile Fish",
+    "pronunciation": "Int",
+    "meaning": "Nile fish",
+    "arabic": "سمكة النيل",
+    "description": "Represents a species of fish native to the Nile, used in offerings and as a symbol of abundance."
+  },
+  {
+    "id": "Not",
+    "english": "Not",
+    "pronunciation": "N",
+    "meaning": "Negation",
+    "arabic": "ليس",
+    "description": "A negation particle meaning 'not', essential to ancient Egyptian grammar for expressing negative statements."
+  },
+  {
+    "id": "Now",
+    "english": "Now",
+    "pronunciation": "N",
+    "meaning": "Now",
+    "arabic": "الآن",
+    "description": "A temporal indicator meaning 'now' or 'at this time', used to mark present actions in hieroglyphic texts."
+  },
+  {
+    "id": "Nurse",
+    "english": "Nurse",
+    "pronunciation": "Mnqt",
+    "meaning": "Nurse",
+    "arabic": "ممرضة",
+    "description": "Represents a nursing figure, associated with childcare and the divine wet nurse in mythology."
+  },
+  {
+    "id": "Nursing",
+    "english": "Nursing",
+    "pronunciation": "Mnq.t",
+    "meaning": "Breastfeeding",
+    "arabic": "رضاعة",
+    "description": "Depicts the act of breastfeeding, symbolizing nourishment, life, and the nurturing aspects of goddesses."
+  },
+  {
+    "id": "Occur",
+    "english": "Occur",
+    "pronunciation": "Hp",
+    "meaning": "To occur",
+    "arabic": "يحدث",
+    "description": "A determinative meaning 'to happen' or 'to occur', used in narrative texts to mark events."
+  },
+  {
+    "id": "One",
+    "english": "One",
+    "pronunciation": "W",
+    "meaning": "One",
+    "arabic": "واحد",
+    "description": "The hieroglyphic numeral for one, represented by a single vertical stroke."
+  },
+  {
+    "id": "Owl",
+    "english": "Owl",
+    "pronunciation": "M",
+    "meaning": "Owl",
+    "arabic": "بومة",
+    "description": "Represents the owl, the phonetic value for the letter 'm'. Also associated with the night and wisdom."
+  },
+  {
+    "id": "Pair",
+    "english": "Pair",
+    "pronunciation": "Sn",
+    "meaning": "Pair",
+    "arabic": "زوج",
+    "description": "Depicts two identical objects side by side, indicating duality or a pair in ancient Egyptian counting."
+  },
+  {
+    "id": "Papyrus_Scroll",
+    "english": "Papyrus Scroll",
+    "pronunciation": "Mdt",
+    "meaning": "Scroll",
+    "arabic": "لفافة بردي",
+    "description": "Represents a rolled papyrus scroll, the primary writing material in ancient Egypt, symbolizing knowledge."
+  },
+  {
+    "id": "Pool",
+    "english": "Pool",
+    "pronunciation": "S",
+    "meaning": "Pool",
+    "arabic": "بركة",
+    "description": "Depicts a pool of water, used in texts relating to irrigation, ritual purification, and garden features."
+  },
+  {
+    "id": "QuailChick",
+    "english": "Quail Chick",
+    "pronunciation": "W",
+    "meaning": "Quail",
+    "arabic": "طائر السمان",
+    "description": "Represents a young quail, used as a phonetic sign for the sound 'w' in the ancient Egyptian alphabet."
+  },
+  {
+    "id": "Reed",
+    "english": "Reed",
+    "pronunciation": "I",
+    "meaning": "Reed leaf",
+    "arabic": "قصب",
+    "description": "Represents a reed leaf, used as a phonetic sign for the sound 'i' and in words related to plants."
+  },
+  {
+    "id": "Ring",
+    "english": "Ring",
+    "pronunciation": "Snb",
+    "meaning": "Ring",
+    "arabic": "خاتم",
+    "description": "Represents a ring, associated with cycles, eternity, and the sun's path across the sky."
+  },
+  {
+    "id": "Rope",
+    "english": "Rope",
+    "pronunciation": "W3h",
+    "meaning": "Rope",
+    "arabic": "حبل",
+    "description": "Depicts a coil of rope, used in measurement, construction, and as a determinative for binding."
+  },
+  {
+    "id": "Ruler",
+    "english": "Ruler",
+    "pronunciation": "Mk",
+    "meaning": "Measuring rod",
+    "arabic": "مسطرة",
+    "description": "Represents a measuring tool or ruler, used in texts related to geometry, architecture, and land surveying."
+  },
+  {
+    "id": "Sail",
+    "english": "Sail",
+    "pronunciation": "Sw",
+    "meaning": "Sail",
+    "arabic": "شراع",
+    "description": "Depicts a sailing vessel's sail, representing travel, trade, and the navigation of the Nile River."
+  },
+  {
+    "id": "Sandal",
+    "english": "Sandal",
+    "pronunciation": "Tb",
+    "meaning": "Sandal",
+    "arabic": "صندل",
+    "description": "Represents a sandal or footwear, associated with walking, travel, and the concept of setting forth."
+  },
+  {
+    "id": "Semen",
+    "english": "Semen",
+    "pronunciation": "Sn",
+    "meaning": "Procreation",
+    "arabic": "مني",
+    "description": "Represents the concept of procreation and creation, associated with the god Khnum and divine creative power."
+  },
+  {
+    "id": "Small_Ring",
+    "english": "Small Ring",
+    "pronunciation": "Xn",
+    "meaning": "Small ring",
+    "arabic": "حلقة صغيرة",
+    "description": "A smaller ring form used as a determinative for small circular objects and containers."
+  },
+  {
+    "id": "Snake",
+    "english": "Snake",
+    "pronunciation": "F",
+    "meaning": "Serpent",
+    "arabic": "أفعى",
+    "description": "Depicts a snake (horned viper), used as a phonetic sign and associated with protection and chaos."
+  },
+  {
+    "id": "Soldier",
+    "english": "Soldier",
+    "pronunciation": "Hm",
+    "meaning": "Warrior",
+    "arabic": "جندي",
+    "description": "Depicts a warrior or soldier, representing military power and the defense of Egypt's borders."
+  },
+  {
+    "id": "Star",
+    "english": "Star",
+    "pronunciation": "Sps",
+    "meaning": "Star",
+    "arabic": "نجمة",
+    "description": "Represents a five-pointed star, symbolizing the sky, celestial bodies, and the divine realm of the gods."
+  },
+  {
+    "id": "Stick",
+    "english": "Stick",
+    "pronunciation": "Md",
+    "meaning": "Staff",
+    "arabic": "عصا",
+    "description": "Depicts a walking stick or staff, symbolizing authority, old age, and the journey of life."
+  },
+  {
+    "id": "Swallow",
+    "english": "Swallow",
+    "pronunciation": "Wr",
+    "meaning": "Swallow",
+    "arabic": "سنونو",
+    "description": "Represents the swallow bird, symbolizing rebirth and the arrival of a new season."
+  },
+  {
+    "id": "This",
+    "english": "This",
+    "pronunciation": "Pw",
+    "meaning": "This",
+    "arabic": "هذا",
+    "description": "A demonstrative pronoun meaning 'this', used to indicate a specific object or concept near the speaker."
+  },
+  {
+    "id": "To_Be_Dead",
+    "english": "To Be Dead",
+    "pronunciation": "Wkh",
+    "meaning": "Death",
+    "arabic": "أن يكون ميتاً",
+    "description": "A determinative meaning 'to be dead' or 'death', used in funerary texts and inscriptions about the deceased."
+  },
+  {
+    "id": "To_Protect",
+    "english": "To Protect",
+    "pronunciation": "Sau",
+    "meaning": "Protection",
+    "arabic": "حماية",
+    "description": "A determinative meaning 'to protect' or 'to guard', associated with divine protection and safekeeping."
+  },
+  {
+    "id": "To_Say",
+    "english": "To Say",
+    "pronunciation": "Md",
+    "meaning": "To speak",
+    "arabic": "قول",
+    "description": "A determinative meaning 'to say' or 'to speak', used to introduce quoted speech in hieroglyphic texts."
+  },
+  {
+    "id": "Turtle",
+    "english": "Turtle",
+    "pronunciation": "Sn",
+    "meaning": "Turtle",
+    "arabic": "سلحفاة",
+    "description": "Represents a turtle, symbolizing patience, longevity, and the primordial waters of creation."
+  },
+  {
+    "id": "Viper",
+    "english": "Viper",
+    "pronunciation": "F",
+    "meaning": "Viper",
+    "arabic": "أفعى قاتلة",
+    "description": "Depicts a horned viper, used as a phonetic sign for the letter 'f' and associated with desert dangers."
+  },
+  {
+    "id": "Wall",
+    "english": "Wall",
+    "pronunciation": "Inb",
+    "meaning": "Wall",
+    "arabic": "جدار",
+    "description": "Represents a wall or enclosure, used as a determinative for buildings, fortifications, and architectural structures."
+  },
+  {
+    "id": "Water",
+    "english": "Water",
+    "pronunciation": "N",
+    "meaning": "Water",
+    "arabic": "ماء",
+    "description": "Depicts water ripples, the phonetic sign for 'n'. Fundamental to Egyptian life and symbolizing the Nile's fertility."
+  },
+  {
+    "id": "Woman",
+    "english": "Woman",
+    "pronunciation": "St",
+    "meaning": "Woman",
+    "arabic": "امرأة",
+    "description": "Depicts a seated woman, used as a determinative for female persons, professions, and feminine nouns."
+  },
+  {
+    "id": "You",
+    "english": "You",
+    "pronunciation": "Tn",
+    "meaning": "You",
+    "arabic": "أنت",
+    "description": "A second-person pronoun meaning 'you', used to address the listener directly in ancient Egyptian texts."
+  }
+]

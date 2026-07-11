@@ -1,203 +1,162 @@
-import 'dart:ui';
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../data/services/hieroglyph_ai_service.dart';
+import 'package:dalil/features/hieroglyphics_decoder/presentation/manager/hieroglyphics_decoder_cubit.dart';
+import 'package:dalil/features/hieroglyphics_decoder/presentation/manager/hieroglyphics_decoder_state.dart';
+import 'package:dalil/features/hieroglyphics_decoder/presentation/widgets/bounding_box_painter.dart';
+import 'package:dalil/features/hieroglyphics_decoder/presentation/widgets/detected_symbols_list.dart';
+import 'package:dalil/features/hieroglyphics_decoder/presentation/widgets/image_source_selector.dart';
+import 'package:dalil/features/hieroglyphics_decoder/presentation/widgets/symbol_bottom_sheet.dart';
 
-// DALIL Premium Color Palette
-class DalilColors {
-  static const Color richBlack = Color(0xFF101010);
-  static const Color matteGold = Color(0xFFFFD700);
-  static const Color offWhite = Color(0xFFFAFAFA);
-  static const Color glassBackground = Color(0x66101010);
-}
-
-class DalilScanScreen extends StatefulWidget {
-  const DalilScanScreen({super.key});
+class HieroglyphicsDecoderPage extends StatefulWidget {
+  const HieroglyphicsDecoderPage({super.key});
 
   @override
-  State<DalilScanScreen> createState() => _DalilScanScreenState();
+  State<HieroglyphicsDecoderPage> createState() =>
+      _HieroglyphicsDecoderPageState();
 }
 
-class _DalilScanScreenState extends State<DalilScanScreen> {
-  bool _isProcessing = false;
+class _HieroglyphicsDecoderPageState extends State<HieroglyphicsDecoderPage> {
   final ImagePicker _picker = ImagePicker();
-  final HieroglyphAiService _aiService = HieroglyphAiService();
+  int? _selectedDetectionIndex;
+  ui.Image? _decodedImage;
 
   @override
   void initState() {
     super.initState();
-    _aiService.init();
+    context.read<HieroglyphicsDecoderCubit>().initializeModel();
   }
 
-  Future<void> _onCapture() async {
+  Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-      if (image != null) {
-        setState(() => _isProcessing = true);
-        final result = await _aiService.predict(image.path);
-        if (mounted) {
-          setState(() => _isProcessing = false);
-          if (result != null) {
-            _showTranslationCard(
-              context,
-              arabicName: result.arabicName,
-              phonetic: result.phonetic,
-              description: result.description,
-            );
-          }
-        }
+      final xFile = await _picker.pickImage(source: source, imageQuality: 90);
+      if (xFile != null && mounted) {
+        _selectedDetectionIndex = null;
+        _decodedImage = null;
+        await context
+            .read<HieroglyphicsDecoderCubit>()
+            .processImage(File(xFile.path));
       }
     } catch (e) {
-      debugPrint("Error capturing image: $e");
-      if (mounted) setState(() => _isProcessing = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick image: $e',
+                style: GoogleFonts.cairo()),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
     }
   }
 
-  Future<void> _onGalleryPick() async {
-    try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() => _isProcessing = true);
-        final result = await _aiService.predict(image.path);
-        if (mounted) {
-          setState(() => _isProcessing = false);
-          if (result != null) {
-            _showTranslationCard(
-              context,
-              arabicName: result.arabicName,
-              phonetic: result.phonetic,
-              description: result.description,
-            );
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint("Error picking image: $e");
-      if (mounted) setState(() => _isProcessing = false);
+  Future<void> _decodeImageSize(File imageFile) async {
+    if (_decodedImage != null) return;
+    final bytes = await imageFile.readAsBytes();
+    final codec = await ui.instantiateImageCodec(bytes);
+    final frame = await codec.getNextFrame();
+    _decodedImage = frame.image;
+    if (mounted) setState(() {});
+  }
+
+  void _onSymbolTap(int index) {
+    final state = context.read<HieroglyphicsDecoderCubit>().state;
+    if (state is DecoderSuccess) {
+      setState(() => _selectedDetectionIndex = index);
+      final detection = state.detections[index];
+      final details = state.symbolDetails[detection.label];
+      SymbolBottomSheet.show(
+        context,
+        detection: detection,
+        details: details,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: DalilColors.richBlack,
-      body: Stack(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        title: Text(
+          'Hieroglyphics Decoder',
+          style: GoogleFonts.cairo(fontWeight: FontWeight.w800),
+        ),
+        actions: [
+          BlocBuilder<HieroglyphicsDecoderCubit, HieroglyphicsDecoderState>(
+            builder: (context, state) {
+              if (state is DecoderSuccess || state is Ready) {
+                return IconButton(
+                  onPressed: () {
+                    context.read<HieroglyphicsDecoderCubit>().reset();
+                    setState(() {
+                      _selectedDetectionIndex = null;
+                      _decodedImage = null;
+                    });
+                  },
+                  icon: const Icon(Icons.refresh_rounded),
+                  tooltip: 'Reset',
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
+      ),
+      body: BlocConsumer<HieroglyphicsDecoderCubit, HieroglyphicsDecoderState>(
+        listener: (context, state) {
+          if (state is DecoderError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message, style: GoogleFonts.cairo()),
+                backgroundColor: colorScheme.error,
+              ),
+            );
+          }
+          if (state is DecoderSuccess) {
+            _decodeImageSize(state.imageFile);
+          }
+        },
+        builder: (context, state) {
+          return switch (state) {
+            Initial() || LoadingModel() => _buildLoadingModelState(context),
+            Ready() => _buildReadyState(context),
+            Processing() => _buildProcessingState(context),
+            DecoderSuccess() => _buildSuccessState(context, state),
+            DecoderError() => _buildErrorState(context, state),
+          };
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoadingModelState(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // 1. App Title (Subtle & Elegant)
-          Positioned(
-            top: 60,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Text(
-                "DALIL",
-                style: GoogleFonts.marcellus(
-                  color: DalilColors.matteGold,
-                  fontSize: 28,
-                  letterSpacing: 8,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+          const CircularProgressIndicator.adaptive(),
+          const SizedBox(height: 24),
+          Text(
+            'Loading AI Model...',
+            style: GoogleFonts.cairo(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
             ),
           ),
-
-          // 2. Central Camera Viewport
-          Center(
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.75,
-              height: MediaQuery.of(context).size.width * 0.75,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
-                border: Border.all(
-                  color: DalilColors.matteGold.withOpacity(0.5),
-                  width: 1.2,
-                ),
-              ),
-              child: Stack(
-                children: [
-                  // Simulated Camera Feed Background
-                  Container(
-                    color: Colors.white.withOpacity(0.03),
-                    child: Center(
-                      child: Icon(
-                        Icons.filter_center_focus_outlined,
-                        color: DalilColors.matteGold.withOpacity(0.2),
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                  // Corner Brackets for that 'Scanner' look
-                  ..._buildCorners(),
-                ],
-              ),
-            ),
-          ),
-
-          // 3. Control Bar
-          Positioned(
-            bottom: 60,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Upload from Gallery
-                IconButton(
-                  onPressed: _onGalleryPick,
-                  icon: const Icon(Icons.photo_library_outlined),
-                  color: DalilColors.matteGold,
-                  iconSize: 28,
-                ),
-                const SizedBox(width: 40),
-                // Main Capture Button
-                GestureDetector(
-                  onTap: _isProcessing ? null : _onCapture,
-                  child: Container(
-                    width: 76,
-                    height: 76,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: DalilColors.matteGold,
-                        width: 2,
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _isProcessing
-                            ? Colors.transparent
-                            : DalilColors.matteGold,
-                      ),
-                      child: _isProcessing
-                          ? const Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DalilColors.matteGold,
-                                ),
-                              ),
-                            )
-                          : const Icon(
-                              Icons.camera_alt,
-                              color: DalilColors.richBlack,
-                              size: 32,
-                            ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 68,
-                ), // Spacing to balance the gallery icon
-              ],
+          const SizedBox(height: 8),
+          Text(
+            'Preparing hieroglyphic recognition engine',
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -205,150 +164,248 @@ class _DalilScanScreenState extends State<DalilScanScreen> {
     );
   }
 
-  List<Widget> _buildCorners() {
-    return [
-      _corner(top: 0, left: 0),
-      _corner(top: 0, right: 0, rotate: 1),
-      _corner(bottom: 0, left: 0, rotate: 3),
-      _corner(bottom: 0, right: 0, rotate: 2),
-    ];
+  Widget _buildReadyState(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.auto_stories_rounded,
+              size: 64,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Ready to Decode',
+            style: GoogleFonts.cairo(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 48),
+            child: Text(
+              'Choose an image from camera or gallery to detect hieroglyphic symbols',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 15,
+                color: colorScheme.onSurfaceVariant,
+                height: 1.5,
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          ImageSourceSelector(
+            onCameraTap: () => _pickImage(ImageSource.camera),
+            onGalleryTap: () => _pickImage(ImageSource.gallery),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _corner({
-    double? top,
-    double? bottom,
-    double? left,
-    double? right,
-    int rotate = 0,
-  }) {
-    return Positioned(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-      child: RotatedBox(
-        quarterTurns: rotate,
-        child: Container(
-          width: 20,
-          height: 20,
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(color: DalilColors.matteGold, width: 3),
-              left: BorderSide(color: DalilColors.matteGold, width: 3),
+  Widget _buildProcessingState(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator.adaptive(),
+          const SizedBox(height: 24),
+          Text(
+            'Analyzing Image...',
+            style: GoogleFonts.cairo(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Detecting hieroglyphic symbols',
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuccessState(BuildContext context, DecoderSuccess state) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_rounded,
+                        color: colorScheme.primary,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${state.detections.length} symbol${state.detections.length != 1 ? 's' : ''} detected',
+                        style: GoogleFonts.cairo(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _buildImageView(context, state),
+              ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  void _showTranslationCard(BuildContext context, {
-    required String arabicName,
-    required String phonetic,
-    required String description,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DalilTranslationCard(
-        arabicName: arabicName,
-        phonetic: phonetic,
-        description: description,
-      ),
-    );
-  }
-}
-
-class DalilTranslationCard extends StatelessWidget {
-  final String arabicName;
-  final String phonetic;
-  final String description;
-
-  const DalilTranslationCard({
-    super.key,
-    required this.arabicName,
-    required this.phonetic,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(32, 12, 32, 48),
-        decoration: BoxDecoration(
-          color: DalilColors.glassBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-          border: Border.all(
-            color: DalilColors.matteGold.withOpacity(0.1),
-            width: 1,
-          ),
+        DetectedSymbolsList(
+          detections: state.detections,
+          onSymbolTap: _onSymbolTap,
+          selectedIndex: _selectedDetectionIndex,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Handle
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: DalilColors.matteGold.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          child: SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                context.read<HieroglyphicsDecoderCubit>().reset();
+                setState(() {
+                  _selectedDetectionIndex = null;
+                  _decodedImage = null;
+                });
+              },
+              icon: const Icon(Icons.camera_alt_rounded, size: 20),
+              label: Text(
+                'New Image',
+                style: GoogleFonts.cairo(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+          ),
+        ),
+      ],
+    );
+  }
 
-            // Arabic Name
+  Widget _buildImageView(BuildContext context, DecoderSuccess state) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final imageWidth = _decodedImage?.width.toDouble() ?? 1.0;
+        final imageHeight = _decodedImage?.height.toDouble() ?? 1.0;
+        final displayHeight =
+            (constraints.maxWidth / imageWidth) * imageHeight;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              width: double.infinity,
+              height: displayHeight,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.file(
+                    state.imageFile,
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                  ),
+                  if (_decodedImage != null)
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: BoundingBoxPainter(
+                          detections: state.detections,
+                          imageSize: Size(imageWidth, imageHeight),
+                          widgetSize: Size(
+                            constraints.maxWidth,
+                            displayHeight,
+                          ),
+                          selectedIndex: _selectedDetectionIndex,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, DecoderError state) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: colorScheme.errorContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                size: 48,
+                color: colorScheme.onErrorContainer,
+              ),
+            ),
+            const SizedBox(height: 24),
             Text(
-              arabicName,
+              'Something went wrong',
               style: GoogleFonts.cairo(
-                color: DalilColors.offWhite,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                height: 1.2,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
-
-            // Phonetic Spelling
             Text(
-              "Phonetic: $phonetic",
-              style: GoogleFonts.marcellus(
-                color: DalilColors.matteGold,
-                fontSize: 18,
-                fontStyle: FontStyle.italic,
-                letterSpacing: 1.2,
+              state.message,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 14,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
-
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: Divider(color: Colors.white10),
-            ),
-
-            // Description
-            Text(
-              "HISTORICAL SIGNIFICANCE",
-              style: GoogleFonts.marcellus(
-                color: DalilColors.matteGold.withOpacity(0.6),
-                fontSize: 12,
-                letterSpacing: 2,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              description,
-              style: GoogleFonts.inter(
-                color: DalilColors.offWhite.withOpacity(0.9),
-                fontSize: 16,
-                height: 1.7,
-                letterSpacing: 0.2,
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () {
+                context.read<HieroglyphicsDecoderCubit>().initializeModel();
+              },
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text(
+                'Try Again',
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

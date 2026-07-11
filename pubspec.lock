@@ -33,46 +33,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
-  camera:
-    dependency: "direct main"
-    description:
-      name: camera
-      sha256: "4142a19a38e388d3bab444227636610ba88982e36dff4552d5191a86f65dc437"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.11.4"
-  camera_android_camerax:
-    dependency: transitive
-    description:
-      name: camera_android_camerax
-      sha256: "8516fe308bc341a5067fb1a48edff0ddfa57c0d3cdcc9dbe7ceca3ba119e2577"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.30"
-  camera_avfoundation:
-    dependency: transitive
-    description:
-      name: camera_avfoundation
-      sha256: "11b4aee2f5e5e038982e152b4a342c749b414aa27857899d20f4323e94cb5f0b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.23+2"
-  camera_platform_interface:
-    dependency: transitive
-    description:
-      name: camera_platform_interface
-      sha256: "7ac852d77699acee79f0d438b793feee26721841e50973576419ff5c6d95e9b7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.13.0"
-  camera_web:
-    dependency: transitive
-    description:
-      name: camera_web
-      sha256: "57f49a635c8bf249d07fb95eb693d7e4dda6796dedb3777f9127fb54847beba7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.5+3"
   characters:
     dependency: transitive
     description:
@@ -276,18 +236,18 @@ packages:
     dependency: "direct main"
     description:
       name: image_picker
-      sha256: "784210112be18ea55f69d7076e2c656a4e24949fa9e76429fe53af0c0f4fa320"
+      sha256: "91c025426c2881c551100bce834e201c835a170151545f58d17da5180ca7d9ac"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "1.2.2"
   image_picker_android:
     dependency: transitive
     description:
       name: image_picker_android
-      sha256: "66810af8e99b2657ee98e5c6f02064f69bb63f7a70e343937f70946c5f8c6622"
+      sha256: d5b3e1774af29c9ab00103afb0d4614070f924d2e0057ac867ec98800114793f
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.13+16"
+    version: "0.8.13+17"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -409,7 +369,7 @@ packages:
     source: hosted
     version: "1.0.0"
   path:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -417,7 +377,7 @@ packages:
     source: hosted
     version: "1.9.1"
   path_provider:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
@@ -541,14 +501,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      sha256: ad47125e588cfd37a9a7f86c7d6356dde8dfe89d071d293f80ca9e9273a33871
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   string_scanner:
     dependency: transitive
     description:
